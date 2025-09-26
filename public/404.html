@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script type="text/javascript">
+        // Redirige cualquier ruta al index.html conservando la URL
+        (function () {
+            var l = window.location;
+            var repo = "/RayenWeb"; // 👈 nombre del repo
+            if (l.pathname.startsWith(repo)) {
+                // Corta el prefix "/RayenWeb" y redirige manteniendo query/hash
+                var newUrl = repo + "/index.html" + l.search + l.hash;
+                window.location.replace(newUrl);
+            } else {
+                // fallback por si cambias repo o dominio
+                window.location.replace(repo + "/index.html");
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <p>Redirigiendo...</p>
+</body>
+
+</html>
