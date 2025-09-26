@@ -1,0 +1,9 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Texto inspiracional -->
+  <text x="100" y="60" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#8B5CF6">DREAM</text>
+  <text x="100" y="85" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#8B5CF6">BIG</text>
+  <line x1="80" y1="100" x2="120" y2="100" stroke="#8B5CF6" stroke-width="2"/>
+  <text x="100" y="125" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#8B5CF6">ACHIEVE</text>
+  <text x="100" y="145" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#8B5CF6">MORE</text>
+  <circle cx="100" cy="170" r="15" fill="none" stroke="#8B5CF6" stroke-width="2"/>
+</svg>
