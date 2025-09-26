@@ -6,12 +6,13 @@ on:
       - main   # 👈 ajustá si tu branch principal no es "main"
 
 permissions:
-  contents: write   # 👈 le da permiso de escritura al bot
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -19,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20   # podés usar 18 o 20 según tu proyecto
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -28,9 +29,5 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages   # 👈 branch donde se publica
+      - name: Upload build output
+        uses: actions/upload-pages-artifa

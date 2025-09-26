@@ -1,19 +1,23 @@
+// Imágenes base de las prendas (usando URLs de Unsplash para mockups blancos)
+export const baseGarmentImages = {
+    remera: {
+        front: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+        back: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80'
+    },
+    buzo: {
+        front: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+        back: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80'
+    }
+};
+
 // Función para obtener la imagen base de una prenda
 export const getBaseGarmentImage = (garmentId: string, isBack: boolean = false) => {
-    // Prioridad: mockup blanca local si existe
-    let fileName = '';
-    if (garmentId === 'remera') {
-        fileName = isBack
-            ? '/garment-templates/remera-blanca-dorso.jpg'
-            : '/garment-templates/remera-blanca-frente.jpg';
-    } else if (garmentId === 'buzo') {
-        fileName = isBack
-            ? '/garment-templates/buzo-blanco-dorso.jpg'
-            : '/garment-templates/buzo-blanco-frente.jpg';
+    const garmentTypeImages = baseGarmentImages[garmentId as keyof typeof baseGarmentImages];
+    if (garmentTypeImages) {
+        return isBack ? garmentTypeImages.back : garmentTypeImages.front;
     }
-    // Fallback: si no existe el archivo, usar base
-    // NOTA: En producción, deberías validar la existencia del archivo
-    return fileName;
+    // Fallback image if not found
+    return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
 };
 
 // Función para aplicar filtro de color a una imagen en canvas
@@ -51,29 +55,6 @@ export const applyColorFilter = (ctx: CanvasRenderingContext2D, color: string) =
 };
 
 // Función para obtener la imagen base (mantener compatibilidad)
-// Mejorada: busca mockup local por prenda, color y lado
-export const getGarmentImage = (garmentId: string, color: string, isBack: boolean = false) => {
-    // Mapear colores hex a nombres de archivo
-    const colorMap: Record<string, string> = {
-        '#FFFFFF': 'blanca',
-        '#000000': 'negra',
-    };
-    const colorName = colorMap[color] || 'blanca';
-    let fileName = '';
-    if (garmentId === 'remera') {
-        if (!isBack) {
-            // Prioridad: mockup JPG si existe
-            fileName = `/garment-templates/remera-${colorName}-frente.jpg`;
-        } else {
-            // Si agregas dorso, usa: `/garment-templates/remera-${colorName}-dorso.jpg`
-            fileName = `/garment-templates/remera-${colorName}-dorso.jpg`;
-        }
-    } else if (garmentId === 'buzo') {
-        fileName = isBack
-            ? `/garment-templates/buzo-base-${colorName}-back.svg`
-            : `/garment-templates/buzo-base-${colorName}-front.svg`;
-    }
-    // Fallback: si no existe el archivo, usar base
-    // NOTA: En producción, deberías validar la existencia del archivo
-    return fileName;
+export const getGarmentImage = (garmentId: string, _color: string, isBack: boolean = false) => {
+  return getBaseGarmentImage(garmentId, isBack);
 };

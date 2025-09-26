@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { RotateCw, Move, Maximize2, Eye, EyeOff } from 'lucide-react';
 import { GarmentType, Design, DesignSize } from '../types/Design';
-import { getGarmentImage } from '../data/garmentImages';
+import { getBaseGarmentImage, applyColorFilter } from '../data/garmentImages';
 
-interface DesignPreviewProps {
+interface SmoothCanvasPreviewProps {
     garmentType: GarmentType | null;
     garmentColor: string;
     selectedDesign: Design | null;
@@ -14,7 +14,7 @@ interface DesignPreviewProps {
     onRotationChange: (rotation: number) => void;
 }
 
-const DesignPreview: React.FC<DesignPreviewProps> = ({
+const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
     garmentType,
     garmentColor,
     selectedDesign,
@@ -24,19 +24,158 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
     onPositionChange,
     onRotationChange
 }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const garmentCanvasRef = useRef<HTMLCanvasElement>(null);
+    const designCanvasRef = useRef<HTMLCanvasElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [showBack, setShowBack] = useState(false);
-    const previewRef = useRef<HTMLDivElement>(null);
-    const designRef = useRef<HTMLDivElement>(null);
+    const [containerSize, setContainerSize] = useState({ width: 400, height: 500 });
+    const [garmentImageLoaded, setGarmentImageLoaded] = useState(false);
+    const [designImageLoaded, setDesignImageLoaded] = useState(false);
 
+    // Función para dibujar el canvas de la prenda (SOLO UNA VEZ)
+    const drawGarmentCanvas = useCallback(() => {
+        if (!garmentCanvasRef.current || !garmentType) return;
 
+        const canvas = garmentCanvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Crear imagen de fondo
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            // Dibujar la imagen base
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Aplicar filtro de color
+            applyColorFilter(ctx, garmentColor);
+
+            setGarmentImageLoaded(true);
+        };
+        img.onerror = () => {
+            console.error('Error loading garment image');
+            setGarmentImageLoaded(true);
+        };
+        img.src = getBaseGarmentImage(garmentType.id, showBack);
+    }, [garmentType, garmentColor, showBack]);
+
+    // Función para dibujar el canvas del diseño (SOLO UNA VEZ - sin redibujar durante drag)
+    const drawDesignCanvas = useCallback(() => {
+        if (!designCanvasRef.current || !selectedDesign || isDragging) return;
+
+        const canvas = designCanvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Crear imagen del diseño
+        const designImg = new Image();
+        designImg.crossOrigin = 'anonymous';
+        designImg.onload = () => {
+            // Calcular posición y tamaño
+            const x = (designPosition.x / 100) * canvas.width;
+            const y = (designPosition.y / 100) * canvas.height;
+            const size = Math.min(canvas.width, canvas.height) * 0.15 * designSize.scale;
+
+            // Guardar contexto
+            ctx.save();
+
+            // Mover al centro del diseño
+            ctx.translate(x, y);
+
+            // Rotar
+            ctx.rotate((designRotation * Math.PI) / 180);
+
+            // Dibujar diseño
+            ctx.drawImage(designImg, -size / 2, -size / 2, size, size);
+
+            // Restaurar contexto
+            ctx.restore();
+
+            setDesignImageLoaded(true);
+        };
+        designImg.onerror = () => {
+            console.error('Error loading design image');
+            setDesignImageLoaded(true);
+        };
+        designImg.src = selectedDesign.image;
+    }, [selectedDesign, designSize, designPosition, designRotation, isDragging]);
+
+    // Función para redimensionar los canvas
+    const resizeCanvas = useCallback(() => {
+        if (!containerRef.current || !garmentCanvasRef.current || !designCanvasRef.current) return;
+
+        const container = containerRef.current;
+        const rect = container.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+
+        setContainerSize({ width, height });
+
+        // Configurar canvas de la prenda (estático)
+        const garmentCanvas = garmentCanvasRef.current;
+        garmentCanvas.width = width;
+        garmentCanvas.height = height;
+        garmentCanvas.style.width = `${width}px`;
+        garmentCanvas.style.height = `${height}px`;
+
+        // Configurar canvas del diseño (móvil)
+        const designCanvas = designCanvasRef.current;
+        designCanvas.width = width;
+        designCanvas.height = height;
+        designCanvas.style.width = `${width}px`;
+        designCanvas.style.height = `${height}px`;
+
+        // Redibujar solo si las imágenes están cargadas
+        if (garmentImageLoaded) {
+            drawGarmentCanvas();
+        }
+        if (designImageLoaded) {
+            drawDesignCanvas();
+        }
+    }, [garmentImageLoaded, designImageLoaded, drawGarmentCanvas, drawDesignCanvas]);
+
+    // Cargar imagen de la prenda cuando cambie
+    useEffect(() => {
+        if (garmentType) {
+            setGarmentImageLoaded(false);
+            drawGarmentCanvas();
+        }
+    }, [garmentType, garmentColor, showBack, drawGarmentCanvas]);
+
+    // Cargar imagen del diseño cuando cambie
+    useEffect(() => {
+        if (selectedDesign) {
+            setDesignImageLoaded(false);
+            drawDesignCanvas();
+        }
+    }, [selectedDesign, designSize, designPosition, designRotation, drawDesignCanvas]);
+
+    // Redimensionar cuando cambie el tamaño del contenedor
+    useEffect(() => {
+        resizeCanvas();
+
+        const handleResize = () => resizeCanvas();
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [resizeCanvas]);
+
+    // Manejar eventos de mouse
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!selectedDesign) return;
-        e.preventDefault();
 
+        e.preventDefault();
         setIsDragging(true);
-        const rect = previewRef.current?.getBoundingClientRect();
+
+        const rect = designCanvasRef.current?.getBoundingClientRect();
         if (rect) {
             setDragStart({
                 x: e.clientX - (designPosition.x / 100) * rect.width,
@@ -46,9 +185,9 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging || !previewRef.current) return;
+        if (!isDragging || !designCanvasRef.current) return;
 
-        const rect = previewRef.current.getBoundingClientRect();
+        const rect = designCanvasRef.current.getBoundingClientRect();
         const newX = Math.max(10, Math.min(90, ((e.clientX - dragStart.x) / rect.width) * 100));
         const newY = Math.max(10, Math.min(90, ((e.clientY - dragStart.y) / rect.height) * 100));
 
@@ -57,17 +196,22 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
 
     const handleMouseUp = () => {
         setIsDragging(false);
+        // Redibujar el canvas una vez al terminar el drag
+        setTimeout(() => {
+            drawDesignCanvas();
+        }, 100);
     };
 
     const handleRotate = () => {
         onRotationChange((designRotation + 15) % 360);
     };
 
+    // Eventos globales para el drag
     useEffect(() => {
         const handleGlobalMouseMove = (e: MouseEvent) => {
-            if (!isDragging || !previewRef.current) return;
+            if (!isDragging || !designCanvasRef.current) return;
 
-            const rect = previewRef.current.getBoundingClientRect();
+            const rect = designCanvasRef.current.getBoundingClientRect();
             const newX = Math.max(10, Math.min(90, ((e.clientX - dragStart.x) / rect.width) * 100));
             const newY = Math.max(10, Math.min(90, ((e.clientY - dragStart.y) / rect.height) * 100));
 
@@ -76,18 +220,22 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
 
         const handleGlobalMouseUp = () => {
             setIsDragging(false);
+            // Redibujar el canvas una vez al terminar el drag
+            setTimeout(() => {
+                drawDesignCanvas();
+            }, 100);
         };
 
         if (isDragging) {
-            document.addEventListener('mousemove', handleGlobalMouseMove);
-            document.addEventListener('mouseup', handleGlobalMouseUp);
+            document.addEventListener('mousemove', handleGlobalMouseMove, { passive: true });
+            document.addEventListener('mouseup', handleGlobalMouseUp, { passive: true });
         }
 
         return () => {
             document.removeEventListener('mousemove', handleGlobalMouseMove);
             document.removeEventListener('mouseup', handleGlobalMouseUp);
         };
-    }, [isDragging, dragStart, onPositionChange]);
+    }, [isDragging, dragStart, onPositionChange, drawDesignCanvas]);
 
     if (!garmentType) {
         return (
@@ -117,56 +265,108 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
                 Arrastra el diseño para moverlo • Haz clic en rotar para girarlo
             </div>
 
+            {/* Container con doble canvas optimizado */}
             <div
-                ref={previewRef}
+                data-testid="mockup-canvas-wrapper"
                 className="relative aspect-[3/4] bg-gray-100 overflow-hidden border border-gray-200 rounded-lg"
+                style={{
+                    width: '100%',
+                    height: '500px',
+                    position: 'relative',
+                    filter: 'blur(0px)'
+                }}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
             >
-                {/* Imagen base de la prenda */}
-                <img
-                    src={getGarmentImage(garmentType.id, garmentColor, showBack)}
-                    alt={`${garmentType.name} ${garmentColor}`}
-                    className="w-full h-full object-cover"
-                />
-
-                {/* Diseño superpuesto */}
-                {selectedDesign && (
-                    <div
-                        ref={designRef}
-                        className="absolute cursor-move select-none z-10"
+                {/* Container de canvas */}
+                <div
+                    ref={containerRef}
+                    className="canvas-container"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'relative',
+                        userSelect: 'none',
+                        outline: 'none'
+                    }}
+                >
+                    {/* Canvas de la prenda (ESTÁTICO - nunca se redibuja durante drag) */}
+                    <canvas
+                        ref={garmentCanvasRef}
+                        className="lower-canvas"
                         style={{
-                            left: `${designPosition.x}%`,
-                            top: `${designPosition.y}%`,
-                            transform: `translate(-50%, -50%) rotate(${designRotation}deg) scale(${designSize.scale})`,
-                            transformOrigin: 'center',
-                            opacity: isDragging ? 0.8 : 1,
-                            transition: isDragging ? 'none' : 'all 0.2s ease',
-                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            left: '0px',
+                            top: '0px',
+                            touchAction: 'none',
+                            userSelect: 'none',
+                            zIndex: 1
+                        }}
+                    />
+
+                    {/* Canvas del diseño (ESTÁTICO - solo se redibuja al terminar drag) */}
+                    <canvas
+                        ref={designCanvasRef}
+                        className="upper-canvas"
+                        style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            left: '0px',
+                            top: '0px',
+                            touchAction: 'none',
+                            userSelect: 'none',
+                            cursor: isDragging ? 'grabbing' : 'grab',
+                            zIndex: 2,
+                            opacity: isDragging ? 0 : 1,
+                            transition: 'opacity 0.1s ease'
                         }}
                         onMouseDown={handleMouseDown}
-                    >
-                        <img
-                            src={selectedDesign.image}
-                            alt={selectedDesign.name}
-                            className="w-20 h-20 object-contain"
-                            draggable={false}
-                        />
-                    </div>
-                )}
+                    />
 
-                {/* Controles de rotación */}
+                    {/* Elemento HTML para drag suave (solo visible durante drag) */}
+                    {isDragging && selectedDesign && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                left: `${designPosition.x}%`,
+                                top: `${designPosition.y}%`,
+                                transform: 'translate(-50%, -50%)',
+                                width: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale}px`,
+                                height: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale}px`,
+                                pointerEvents: 'none',
+                                zIndex: 10
+                            }}
+                        >
+                            <img
+                                src={selectedDesign.image}
+                                alt="Design"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'contain',
+                                    transform: `rotate(${designRotation}deg)`,
+                                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* Controles de rotación mejorados */}
                 {selectedDesign && (
-                    <div className="absolute bottom-4 right-4 flex space-x-2">
+                    <div className="absolute bottom-4 right-4 flex space-x-2 z-10">
                         <button
                             onClick={handleRotate}
-                            className="p-2 bg-white/90 hover:bg-white transition-colors rounded-full shadow-sm"
+                            className="p-3 bg-white/95 hover:bg-white transition-all duration-200 rounded-full shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105"
                             title="Rotar diseño"
                         >
-                            <RotateCw className="h-4 w-4 text-gray-600" />
+                            <RotateCw className="h-5 w-5 text-gray-700" />
                         </button>
-                        <div className="p-2 bg-white/90 rounded-full shadow-sm flex items-center">
-                            <Move className="h-4 w-4 text-gray-600" />
+                        <div className="p-3 bg-white/95 rounded-full shadow-lg border border-gray-200 flex items-center">
+                            <Move className="h-5 w-5 text-gray-700" />
                         </div>
                     </div>
                 )}
@@ -199,4 +399,4 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({
     );
 };
 
-export default DesignPreview;
+export default SmoothCanvasPreview;

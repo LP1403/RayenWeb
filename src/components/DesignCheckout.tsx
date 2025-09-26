@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Check, ShoppingBag } from 'lucide-react';
 import { CustomDesign } from '../types/Design';
-import { getGarmentImage } from '../data/garmentImages';
-import GarmentCanvasPreview from './GarmentCanvasPreview';
+import { getBaseGarmentImage, applyColorFilter } from '../data/garmentImages';
 
 interface DesignCheckoutProps {
     design: CustomDesign;
@@ -11,10 +10,13 @@ interface DesignCheckoutProps {
 }
 
 const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onComplete }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const garmentCanvasRef = useRef<HTMLCanvasElement>(null);
+    const designCanvasRef = useRef<HTMLCanvasElement>(null);
+
     const getGarmentName = (type: string) => {
         return type === 'remera' ? 'Remera' : 'Buzo';
     };
-
 
     const getDesignSizeName = (size: string) => {
         const sizes: { [key: string]: string } = {
@@ -24,6 +26,118 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
         };
         return sizes[size] || size;
     };
+
+    // Función para redimensionar los canvas
+    const resizeCanvas = useCallback(() => {
+        if (!containerRef.current || !garmentCanvasRef.current || !designCanvasRef.current) return;
+
+        const container = containerRef.current;
+        const rect = container.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+
+        // Configurar canvas de la prenda
+        const garmentCanvas = garmentCanvasRef.current;
+        garmentCanvas.width = width;
+        garmentCanvas.height = height;
+        garmentCanvas.style.width = `${width}px`;
+        garmentCanvas.style.height = `${height}px`;
+
+        // Configurar canvas del diseño
+        const designCanvas = designCanvasRef.current;
+        designCanvas.width = width;
+        designCanvas.height = height;
+        designCanvas.style.width = `${width}px`;
+        designCanvas.style.height = `${height}px`;
+
+        // Redibujar
+        drawGarmentCanvas();
+        drawDesignCanvas();
+    }, [design]);
+
+    // Función para dibujar el canvas de la prenda
+    const drawGarmentCanvas = useCallback(() => {
+        if (!garmentCanvasRef.current) return;
+
+        const canvas = garmentCanvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Crear imagen de fondo
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            // Dibujar la imagen base
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Aplicar filtro de color
+            applyColorFilter(ctx, design.garmentColor);
+        };
+        img.src = getBaseGarmentImage(design.garmentType);
+    }, [design.garmentType, design.garmentColor]);
+
+    // Función para dibujar el canvas del diseño
+    const drawDesignCanvas = useCallback(() => {
+        if (!designCanvasRef.current || !design.selectedDesign) return;
+
+        const canvas = designCanvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Limpiar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Crear imagen del diseño
+        const designImg = new Image();
+        designImg.crossOrigin = 'anonymous';
+        designImg.onload = () => {
+            // Calcular posición y tamaño
+            const x = (design.designPosition.x / 100) * canvas.width;
+            const y = (design.designPosition.y / 100) * canvas.height;
+            const size = Math.min(canvas.width, canvas.height) * 0.15 * (
+                design.designSize === 'small' ? 0.8 :
+                    design.designSize === 'medium' ? 1.5 : 2.0
+            );
+
+            // Guardar contexto
+            ctx.save();
+
+            // Mover al centro del diseño
+            ctx.translate(x, y);
+
+            // Rotar
+            ctx.rotate((design.designRotation * Math.PI) / 180);
+
+            // Dibujar diseño
+            ctx.drawImage(designImg, -size / 2, -size / 2, size, size);
+
+            // Restaurar contexto
+            ctx.restore();
+        };
+        designImg.src = design.selectedDesign.image;
+    }, [design]);
+
+    // Efecto para redimensionar cuando cambie el tamaño del contenedor
+    useEffect(() => {
+        resizeCanvas();
+
+        const handleResize = () => resizeCanvas();
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [resizeCanvas]);
+
+    // Efecto para redibujar cuando cambien las propiedades
+    useEffect(() => {
+        drawGarmentCanvas();
+    }, [drawGarmentCanvas]);
+
+    useEffect(() => {
+        drawDesignCanvas();
+    }, [drawDesignCanvas]);
 
     const handleWhatsAppOrder = () => {
         const message = `Hola! Quiero personalizar este diseño:
@@ -51,18 +165,64 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* Preview Final */}
+                {/* Preview Final con Canvas */}
                 <div className="space-y-6">
                     <h3 className="text-xl font-light text-black">Vista previa final</h3>
-                    <GarmentCanvasPreview
-                        garmentType={{ id: design.garmentType, name: '', baseImage: '', colors: [] }}
-                        garmentColor={design.garmentColor}
-                        selectedDesign={design.selectedDesign}
-                        designSize={{ id: design.designSize, name: '', scale: 1 }}
-                        designPosition={design.designPosition}
-                        designRotation={design.designRotation}
-                        editable={false}
-                    />
+
+                    {/* Wrapper con estilos exactos de Kittl */}
+                    <div
+                        data-testid="mockup-canvas-wrapper"
+                        className="relative aspect-[3/4] bg-gray-100 overflow-hidden border border-gray-200 rounded-lg"
+                        style={{
+                            width: '100%',
+                            height: '500px',
+                            position: 'relative',
+                            filter: 'blur(0px)'
+                        }}
+                    >
+                        {/* Container con doble canvas como Kittl */}
+                        <div
+                            ref={containerRef}
+                            className="canvas-container"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                position: 'relative',
+                                userSelect: 'none',
+                                outline: 'none'
+                            }}
+                        >
+                            {/* Canvas inferior - Imagen de fondo */}
+                            <canvas
+                                ref={garmentCanvasRef}
+                                className="lower-canvas"
+                                style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                    left: '0px',
+                                    top: '0px',
+                                    touchAction: 'none',
+                                    userSelect: 'none'
+                                }}
+                            />
+
+                            {/* Canvas superior - Diseño */}
+                            <canvas
+                                ref={designCanvasRef}
+                                className="upper-canvas"
+                                style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                    left: '0px',
+                                    top: '0px',
+                                    touchAction: 'none',
+                                    userSelect: 'none'
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Resumen del pedido */}

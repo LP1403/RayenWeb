@@ -1,16 +1,17 @@
 import { Design, GarmentType, DesignSize, PredesignedItem } from '../types/Design';
+import { getBaseGarmentImage } from './garmentImages';
 
 export const garmentTypes: GarmentType[] = [
     {
         id: 'remera',
         name: 'Remera',
-        baseImage: '/garment-templates/remera-blanca-frente.jpg',
+        baseImage: getBaseGarmentImage('remera', false),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     },
     {
         id: 'buzo',
         name: 'Buzo',
-        baseImage: '', // No mostrar si no hay mockup
+        baseImage: getBaseGarmentImage('buzo', false),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     }
 ];

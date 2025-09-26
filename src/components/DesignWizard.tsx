@@ -4,8 +4,7 @@ import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { garmentTypes, designs, designSizes, predesignedItems } from '../data/designData';
 import { GarmentType, Design, DesignSize, PredesignedItem, CustomDesign } from '../types/Design';
 import DesignPreview from './DesignPreview';
-import GarmentCanvasPreview from './GarmentCanvasPreview';
-import CanvasCheckout from './CanvasCheckout';
+import DesignCheckout from './DesignCheckout';
 
 // Sin props, usa useNavigate
 const DesignWizard: React.FC = () => {
@@ -209,18 +208,15 @@ const DesignWizard: React.FC = () => {
 
                             {/* Preview - 40% */}
                             <div className="lg:col-span-2">
-                                {/* Usar DesignPreview para consistencia visual y mockup correcto */}
-                                <GarmentCanvasPreview
+                                <DesignPreview
                                     garmentType={selectedGarment}
                                     garmentColor={selectedColor}
                                     selectedDesign={selectedDesign}
                                     designSize={selectedSize}
                                     designPosition={designPosition}
                                     designRotation={designRotation}
-                                    editable={true}
                                     onPositionChange={setDesignPosition}
                                     onRotationChange={setDesignRotation}
-                                    showBack={false}
                                 />
                             </div>
                         </div>
@@ -229,7 +225,7 @@ const DesignWizard: React.FC = () => {
 
             case 3:
                 return (
-                    <CanvasCheckout
+                    <DesignCheckout
                         design={getCurrentDesign()}
                         onBack={() => setCurrentStep(2)}
                         onComplete={() => {
