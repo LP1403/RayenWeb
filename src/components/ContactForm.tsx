@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MessageCircle, Send, Check, MapPin, Clock } from 'lucide-react';
 
-interface ContactFormProps {
-  onNavigate: (section: string) => void;
-}
-
-const ContactForm: React.FC<ContactFormProps> = ({ onNavigate }) => {
+const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -127,13 +123,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ onNavigate }) => {
                 <MessageCircle className="h-6 w-6 text-black" />
                 <h3 className="text-xl font-light text-black tracking-wide">WHATSAPP</h3>
               </div>
-              
+
               <p className="text-gray-600 mb-8 font-light leading-relaxed">
                 Para consultas rápidas y atención personalizada, escribinos por WhatsApp.
               </p>
-              
+
               <a
-                href="https://wa.me/5491123456789?text=Hola! Me interesa conocer más sobre sus productos"
+                href="https://wa.me/5491123910260?text=Hola! Me interesa conocer más sobre sus productos"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-3 bg-black text-white px-8 py-4 font-light text-sm tracking-wide hover:bg-gray-800 transition-colors"
@@ -155,7 +151,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onNavigate }) => {
                   <p>Domingos: Cerrado</p>
                 </div>
               </div>
-              
+
               <div className="border border-gray-200 p-8">
                 <div className="flex items-center space-x-3 mb-4">
                   <MapPin className="h-5 w-5 text-black" />

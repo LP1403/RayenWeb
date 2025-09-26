@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos específicos para el sistema de canvas como Kittl */
+@keyframes MQRBn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.canvas-container {
+  height: 100%;
+  outline: none;
+  width: 100% !important;
+}
+
+.lower-canvas,
+.upper-canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}

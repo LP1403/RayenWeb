@@ -1,38 +1,175 @@
 import { Product } from '../types/Product';
 
 export const products: Product[] = [
-  {
-    id: 1,
-    name: "Remera Básica Premium",
-    category: "remera",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    colors: ["Negro", "Blanco", "Gris"],
-    price: 15900,
-    images: [
-      "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
-      "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg",
-      "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg"
-    ],
-    description: "Remera de algodón 100% premium, perfecta para el uso diario. Corte clásico que sienta bien en cualquier ocasión. Confeccionada con materiales de alta calidad que garantizan durabilidad y comodidad.",
-    featured: true,
-    material: "100% Algodón Premium",
-    care: "Lavar a máquina con agua fría. No usar blanqueador."
-  },
+  // {
+  //   id: 1,
+  //   name: "Remera Básica Premium",
+  //   category: "remera",
+  //   sizes: ["S", "M", "L", "XL", "XXL"],
+  //   colors: ["Negro", "Blanco", "Gris"],
+  //   price: 15900,
+  //   images: [
+  //     "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
+  //     "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg",
+  //     "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg"
+  //   ],
+  //   description: "Remera de algodón 100% premium, perfecta para el uso diario. Corte clásico que sienta bien en cualquier ocasión. Confeccionada con materiales de alta calidad que garantizan durabilidad y comodidad.",
+  //   featured: true,
+  //   material: "100% Algodón Premium",
+  //   care: "Lavar a máquina con agua fría. No usar blanqueador.",
+  //   carouselImages: [
+  //     "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
+  //     "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg"
+
   {
     id: 2,
-    name: "Remera Oversize Urban",
+    name: "Buzo Gato Psycho",
+    category: "buzo",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["Negro"],
+    price: 25000,
+    images: [
+      "/Mock up buzo gato negro-Espalda Negro.jpg",
+      "/Mock up buzo gato negro-frente Negro.jpg"
+    ],
+    imagesByColor: {
+      "Negro": [
+        "/Mock up buzo gato negro-Espalda Negro.jpg",
+        "/Mock up buzo gato negro-frente Negro.jpg"
+      ]
+    },
+    description: "Buzo de algodón premium con diseño exclusivo de gato en color negro, marrón o beige. Ideal para quienes buscan comodidad y estilo en una prenda versátil para cualquier ocasión.",
+    featured: true,
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock up buzo gato negro-Espalda Negro.jpg",
+      "/Mock up buzo gato negro-frente Negro.jpg"
+    ]
+  },
+  {
+    id: 3,
+    name: "Buzo Gato Colores",
+    category: "buzo",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["Marrón", "Beige"],
+    price: 25000,
+    images: [
+      "/Mock buzo gato lentes-Marron osc.jpg",
+      "/Mock buzo gato lentes-frente Marron osc.jpg"
+    ],
+    imagesByColor: {
+      "Marrón": [
+        "/Mock buzo gato lentes-Marron osc.jpg",
+        "/Mock buzo gato lentes-frente Marron osc.jpg"
+      ],
+      "Beige": [
+        "/Mock buzo gato lentes-Beige.jpg",
+        "/Mock buzo gato lentes-Beige frente.jpg"
+      ]
+    },
+    description: "Buzo de algodón premium con diseño exclusivo de gato en color negro, marrón o beige. Ideal para quienes buscan comodidad y estilo en una prenda versátil para cualquier ocasión.",
+    featured: false,
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock buzo gato lentes-Marron osc.jpg",
+      "/Mock buzo gato lentes-frente Marron osc.jpg"
+    ]
+  },
+  {
+    id: 4,
+    name: "Buzo Serpiente Negro",
+    category: "buzo",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["Negro"],
+    price: 27000,
+    images: [
+      "/Mock buzo serpiente-Espalda.jpg",
+      "/Mock buzo serpiente-frente.jpg"
+    ],
+    description: "Buzo negro con diseño de serpiente, confeccionado en algodón premium. Perfecto para quienes buscan un estilo audaz y cómodo.",
+    featured: true,
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock buzo serpiente-Espalda.jpg",
+      "/Mock buzo serpiente-frente.jpg"
+    ]
+  },
+  // Eliminado porque está incluido en el producto anterior con variantes de color
+  {
+    id: 6,
+    name: "Remera Flor Negra",
     category: "remera",
     sizes: ["S", "M", "L", "XL", "XXL"],
-    colors: ["Negro", "Beige", "Verde Oliva"],
-    price: 18500,
+    colors: ["Negro"],
+    price: 18000,
     images: [
-      "https://images.pexels.com/photos/1261422/pexels-photo-1261422.jpeg",
-      "https://images.pexels.com/photos/1261427/pexels-photo-1261427.jpeg",
-      "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg"
+      "/Mock up remera negra frente-Flor.jpg",
+      "/Mock up remera negra espalda-Flor.jpg"
     ],
-    description: "Remera con corte oversize para un look urbano y moderno. Tejido de alta calidad que mantiene su forma y color después de múltiples lavados. Ideal para combinar con cualquier outfit casual.",
+    description: "Remera negra con diseño de flor, confeccionada en algodón premium. Elegancia y comodidad en una sola prenda.",
     featured: true,
-    material: "Mezcla de Algodón y Poliéster",
-    care: "Lavar a máquina con colores similares. Secar a temperatura media."
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock up remera negra frente-Flor.jpg",
+      "/Mock up remera negra espalda-Flor.jpg"
+    ]
+  },
+  {
+    id: 7,
+    name: "Remera Araña Negra",
+    category: "remera",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["Negro"],
+    price: 18000,
+    images: [
+      "/Mock up remera negra espalda-Araña.jpg",
+      "/Mock up remera negra frente-Araña.jpg"
+    ],
+    description: "Remera negra con diseño de araña, confeccionada en algodón premium. Un toque de originalidad para tu outfit diario.",
+    featured: false,
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock up remera negra espalda-Araña.jpg",
+      "/Mock up remera negra frente-Araña.jpg"
+    ]
+  },
+  {
+    id: 8,
+    name: "Remera Gato Color",
+    category: "remera",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["Blanco", "Verde", "Negro"],
+    price: 18000,
+    images: [
+      "/Mock remera gato color- blanco frente.jpg",
+      "/Mock remera gato color- blanco.jpg"
+    ],
+    imagesByColor: {
+      "Blanco": [
+        "/Mock remera gato color- blanco frente.jpg",
+        "/Mock remera gato color- blanco.jpg"
+      ],
+      "Verde": [
+        "/Mock remera gato color- verde frente osc.jpg",
+        "/Mock remera gato color- verde osc.jpg"
+      ],
+      "Negro": [
+        "/Mock remera gato color-Frente Negro.jpg",
+        "/Mock remera gato color-Negro.jpg"
+      ]
+    },
+    description: "Remera Gato Color",
+    featured: true,
+    material: "100% Algodón Premium",
+    care: "Lavar a máquina con agua fría. No usar blanqueador.",
+    carouselImages: [
+      "/Mock remera gato color- blanco frente.jpg",
+      "/Mock remera gato color-Frente Negro.jpg"
+    ]
   }
 ];

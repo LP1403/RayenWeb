@@ -10,4 +10,8 @@ export interface Product {
   featured: boolean;
   material?: string;
   care?: string;
+  carouselImages?: string[];
+  imagesByColor?: {
+    [color: string]: string[];
+  };
 }
