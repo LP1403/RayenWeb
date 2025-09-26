@@ -26,37 +26,37 @@ export const designs: Design[] = [
     {
         id: 1,
         name: 'Logo Minimalista',
-        image: '/designs/logo-minimalista.svg',
+        image: `${import.meta.env.BASE_URL}designs/logo-minimalista.svg`,
         category: 'logo'
     },
     {
         id: 2,
         name: 'Geometría Abstracta',
-        image: '/designs/geometria-abstracta.svg',
+        image: `${import.meta.env.BASE_URL}designs/geometria-abstracta.svg`,
         category: 'graphic'
     },
     {
         id: 3,
         name: 'Tipografía Bold',
-        image: '/designs/tipografia-bold.svg',
+        image: `${import.meta.env.BASE_URL}designs/tipografia-bold.svg`,
         category: 'text'
     },
     {
         id: 4,
         name: 'Patrón Vintage',
-        image: '/designs/patron-vintage.svg',
+        image: `${import.meta.env.BASE_URL}designs/patron-vintage.svg`,
         category: 'graphic'
     },
     {
         id: 5,
         name: 'Líneas Modernas',
-        image: '/designs/lineas-modernas.svg',
+        image: `${import.meta.env.BASE_URL}designs/lineas-modernas.svg`,
         category: 'graphic'
     },
     {
         id: 6,
         name: 'Texto Inspiracional',
-        image: '/designs/texto-inspiracional.svg',
+        image: `${import.meta.env.BASE_URL}designs/texto-inspiracional.svg`,
         category: 'text'
     }
 ];
@@ -71,7 +71,7 @@ export const predesignedItems: PredesignedItem[] = [
         designSize: 'medium',
         designPosition: { x: 50, y: 30 },
         price: 18900,
-        image: '/predesigned/clasico-urbano.svg'
+        image: `${import.meta.env.BASE_URL}predesigned/clasico-urbano.svg`
     },
     {
         id: 2,
@@ -82,7 +82,7 @@ export const predesignedItems: PredesignedItem[] = [
         designSize: 'large',
         designPosition: { x: 50, y: 25 },
         price: 25900,
-        image: '/predesigned/vintage-style.svg'
+        image: `${import.meta.env.BASE_URL}predesigned/vintage-style.svg`
     },
     {
         id: 3,
@@ -93,6 +93,6 @@ export const predesignedItems: PredesignedItem[] = [
         designSize: 'small',
         designPosition: { x: 50, y: 35 },
         price: 16900,
-        image: '/predesigned/modern-minimal.svg'
+        image: `${import.meta.env.BASE_URL}predesigned/modern-minimal.svg`
     }
 ];

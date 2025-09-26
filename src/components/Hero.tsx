@@ -11,7 +11,7 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="/portadas web-15.jpg"
+          src={`${import.meta.env.BASE_URL}portadas web-15.jpg`}
           alt="Fashion Background"
           className="w-full h-full object-cover"
         />

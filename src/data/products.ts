@@ -143,21 +143,21 @@ export const products: Product[] = [
     name: "Remera Gato Color",
     category: "remera",
     sizes: ["S", "M", "L", "XL", "XXL"],
-    colors: ["Blanco", "Verde", "Negro"],
+    colors: ["Negro"],
     price: 18000,
     images: [
-      "/Mock remera gato color- blanco frente.jpg",
-      "/Mock remera gato color- blanco.jpg"
+      "/Mock remera gato color-Frente Negro.jpg",
+      "/Mock remera gato color-Negro.jpg"
     ],
     imagesByColor: {
-      "Blanco": [
+      /*"Blanco": [
         "/Mock remera gato color- blanco frente.jpg",
         "/Mock remera gato color- blanco.jpg"
       ],
       "Verde": [
         "/Mock remera gato color- verde frente osc.jpg",
         "/Mock remera gato color- verde osc.jpg"
-      ],
+      ],*/
       "Negro": [
         "/Mock remera gato color-Frente Negro.jpg",
         "/Mock remera gato color-Negro.jpg"
@@ -168,7 +168,7 @@ export const products: Product[] = [
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock remera gato color- blanco frente.jpg",
+      "/Mock remera gato color-Negro.jpg",
       "/Mock remera gato color-Frente Negro.jpg"
     ]
   }

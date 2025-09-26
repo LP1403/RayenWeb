@@ -15,11 +15,11 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-            <img
-              src={isHome ? "/logoRayenBlanco.png" : "/logoRayenNegro.png"}
-              alt="Rayen Logo"
-              className="w-16 h-16 object-contain"
-            />
+                    <img
+                      src={isHome ? `${import.meta.env.BASE_URL}logoRayenBlanco.png` : `${import.meta.env.BASE_URL}logoRayenNegro.png`}
+                      alt="Rayen Logo"
+                      className="w-16 h-16 object-contain"
+                    />
             {/*
               <span className="text-2xl font-light tracking-wide text-black">RAYEN</span>
             */}
