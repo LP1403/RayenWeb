@@ -29,13 +29,13 @@ export const products: Product[] = [
     colors: ["Negro"],
     price: 25000,
     images: [
-      "/Mock up buzo gato negro-Espalda Negro.jpg",
-      "/Mock up buzo gato negro-frente Negro.jpg"
+      `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
+      `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`
     ],
     imagesByColor: {
       "Negro": [
-        "/Mock up buzo gato negro-Espalda Negro.jpg",
-        "/Mock up buzo gato negro-frente Negro.jpg"
+        `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
+        `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`
       ]
     },
     description: "Buzo de algodón premium con diseño exclusivo de gato en color negro, marrón o beige. Ideal para quienes buscan comodidad y estilo en una prenda versátil para cualquier ocasión.",
@@ -43,8 +43,8 @@ export const products: Product[] = [
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock up buzo gato negro-Espalda Negro.jpg",
-      "/Mock up buzo gato negro-frente Negro.jpg"
+      `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
+      `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`
     ]
   },
   {
@@ -55,17 +55,17 @@ export const products: Product[] = [
     colors: ["Marrón", "Beige"],
     price: 25000,
     images: [
-      "/Mock buzo gato lentes-Marron osc.jpg",
-      "/Mock buzo gato lentes-frente Marron osc.jpg"
+      `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`,
+      `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
     ],
     imagesByColor: {
       "Marrón": [
-        "/Mock buzo gato lentes-Marron osc.jpg",
-        "/Mock buzo gato lentes-frente Marron osc.jpg"
+        `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`,
+        `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
       ],
       "Beige": [
-        "/Mock buzo gato lentes-Beige.jpg",
-        "/Mock buzo gato lentes-Beige frente.jpg"
+        `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige.jpg`,
+        `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige frente.jpg`
       ]
     },
     description: "Buzo de algodón premium con diseño exclusivo de gato en color negro, marrón o beige. Ideal para quienes buscan comodidad y estilo en una prenda versátil para cualquier ocasión.",
@@ -73,8 +73,8 @@ export const products: Product[] = [
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock buzo gato lentes-Marron osc.jpg",
-      "/Mock buzo gato lentes-frente Marron osc.jpg"
+      `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`,
+      `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
     ]
   },
   {
@@ -85,16 +85,16 @@ export const products: Product[] = [
     colors: ["Negro"],
     price: 27000,
     images: [
-      "/Mock buzo serpiente-Espalda.jpg",
-      "/Mock buzo serpiente-frente.jpg"
+      `${import.meta.env.BASE_URL}Mock buzo serpiente-Espalda.jpg`,
+      `${import.meta.env.BASE_URL}Mock buzo serpiente-frente.jpg`
     ],
     description: "Buzo negro con diseño de serpiente, confeccionado en algodón premium. Perfecto para quienes buscan un estilo audaz y cómodo.",
     featured: true,
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock buzo serpiente-Espalda.jpg",
-      "/Mock buzo serpiente-frente.jpg"
+      `${import.meta.env.BASE_URL}Mock buzo serpiente-Espalda.jpg`,
+      `${import.meta.env.BASE_URL}Mock buzo serpiente-frente.jpg`
     ]
   },
   // Eliminado porque está incluido en el producto anterior con variantes de color
@@ -106,16 +106,16 @@ export const products: Product[] = [
     colors: ["Negro"],
     price: 18000,
     images: [
-      "/Mock up remera negra frente-Flor.jpg",
-      "/Mock up remera negra espalda-Flor.jpg"
+      `${import.meta.env.BASE_URL}Mock up remera negra frente-Flor.jpg`,
+      `${import.meta.env.BASE_URL}Mock up remera negra espalda-Flor.jpg`
     ],
     description: "Remera negra con diseño de flor, confeccionada en algodón premium. Elegancia y comodidad en una sola prenda.",
     featured: true,
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock up remera negra frente-Flor.jpg",
-      "/Mock up remera negra espalda-Flor.jpg"
+      `${import.meta.env.BASE_URL}Mock up remera negra frente-Flor.jpg`,
+      `${import.meta.env.BASE_URL}Mock up remera negra espalda-Flor.jpg`
     ]
   },
   {
@@ -126,16 +126,16 @@ export const products: Product[] = [
     colors: ["Negro"],
     price: 18000,
     images: [
-      "/Mock up remera negra espalda-Araña.jpg",
-      "/Mock up remera negra frente-Araña.jpg"
+      `${import.meta.env.BASE_URL}Mock up remera negra espalda-Araña.jpg`,
+      `${import.meta.env.BASE_URL}Mock up remera negra frente-Araña.jpg`
     ],
     description: "Remera negra con diseño de araña, confeccionada en algodón premium. Un toque de originalidad para tu outfit diario.",
     featured: false,
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock up remera negra espalda-Araña.jpg",
-      "/Mock up remera negra frente-Araña.jpg"
+      `${import.meta.env.BASE_URL}Mock up remera negra espalda-Araña.jpg`,
+      `${import.meta.env.BASE_URL}Mock up remera negra frente-Araña.jpg`
     ]
   },
   {
@@ -146,8 +146,8 @@ export const products: Product[] = [
     colors: ["Negro"],
     price: 18000,
     images: [
-      "/Mock remera gato color-Frente Negro.jpg",
-      "/Mock remera gato color-Negro.jpg"
+      `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`,
+      `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`
     ],
     imagesByColor: {
       /*"Blanco": [
@@ -159,8 +159,8 @@ export const products: Product[] = [
         "/Mock remera gato color- verde osc.jpg"
       ],*/
       "Negro": [
-        "/Mock remera gato color-Frente Negro.jpg",
-        "/Mock remera gato color-Negro.jpg"
+        `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`,
+        `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`
       ]
     },
     description: "Remera Gato Color",
@@ -168,8 +168,8 @@ export const products: Product[] = [
     material: "100% Algodón Premium",
     care: "Lavar a máquina con agua fría. No usar blanqueador.",
     carouselImages: [
-      "/Mock remera gato color-Negro.jpg",
-      "/Mock remera gato color-Frente Negro.jpg"
+      `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`,
+      `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`
     ]
   }
 ];
