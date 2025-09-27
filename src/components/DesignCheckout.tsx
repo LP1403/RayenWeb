@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Check, ShoppingBag } from 'lucide-react';
 import { CustomDesign } from '../types/Design';
 import { getBaseGarmentImage, applyColorFilter, getGarmentTemplate } from '../data/garmentImages';
+import { saveDesign, generateDesignId, captureCanvasAsImage } from '../services/designStorage';
 
 interface DesignCheckoutProps {
     design: CustomDesign;
@@ -13,6 +14,73 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
     const containerRef = useRef<HTMLDivElement>(null);
     const garmentCanvasRef = useRef<HTMLCanvasElement>(null);
     const designCanvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Función para capturar el preview completo (mockup + diseño)
+    const captureFullPreview = (): string => {
+        try {
+            if (!garmentCanvasRef.current || !designCanvasRef.current) return '';
+
+            // Crear un canvas temporal para combinar ambos canvas
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            if (!tempCtx) return '';
+
+            // Usar las dimensiones reales del canvas de la prenda (que es el de referencia)
+            const garmentCanvas = garmentCanvasRef.current;
+            tempCanvas.width = garmentCanvas.width;
+            tempCanvas.height = garmentCanvas.height;
+
+            // Dibujar el canvas de la prenda primero (fondo)
+            tempCtx.drawImage(garmentCanvas, 0, 0);
+
+            // Dibujar el canvas del diseño encima
+            const designCanvas = designCanvasRef.current;
+            tempCtx.drawImage(designCanvas, 0, 0);
+
+            return tempCanvas.toDataURL('image/png', 1.0);
+        } catch (error) {
+            console.error('Error al capturar preview completo:', error);
+            return '';
+        }
+    };
+
+    // Función para guardar el diseño con preview
+    const handleSaveDesign = async () => {
+        try {
+            // Generar ID único para el diseño
+            const designId = generateDesignId();
+
+            // Capturar el preview completo (mockup + diseño)
+            const previewImage = captureFullPreview();
+
+            // Crear el diseño completo para guardar
+            const designToSave: CustomDesign = {
+                id: designId,
+                garmentType: design.garmentType,
+                garmentColor: design.garmentColor,
+                selectedDesign: design.selectedDesign,
+                designSize: design.designSize,
+                designPosition: design.designPosition,
+                designRotation: design.designRotation,
+                price: design.price,
+                createdAt: new Date(),
+                previewImage: previewImage,
+                showBack: false // Por defecto mostrar frente
+            };
+
+            // Guardar en localStorage
+            saveDesign(designToSave);
+
+            // Mostrar confirmación
+            alert('¡Diseño guardado exitosamente!');
+
+            // Continuar con el flujo normal
+            onComplete();
+        } catch (error) {
+            console.error('Error al guardar diseño:', error);
+            alert('Error al guardar el diseño. Inténtalo de nuevo.');
+        }
+    };
 
     const getGarmentName = (type: string) => {
         return type === 'remera' ? 'Remera' : 'Buzo';
@@ -27,14 +95,34 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
         return sizes[size] || size;
     };
 
+    const formatPrice = (price: number) => {
+        if (price === 0 || price === null || price === undefined) {
+            return 'A confirmar';
+        }
+        return `$${price.toLocaleString()}`;
+    };
+
     // Función para redimensionar los canvas
     const resizeCanvas = useCallback(() => {
         if (!containerRef.current || !garmentCanvasRef.current || !designCanvasRef.current) return;
 
         const container = containerRef.current;
         const rect = container.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
+
+        // Mantener aspect ratio 3:4
+        const maxWidth = rect.width;
+        const maxHeight = rect.height;
+
+        // Calcular dimensiones manteniendo aspect ratio
+        const aspectRatio = 3 / 4;
+        let width = maxWidth;
+        let height = maxWidth / aspectRatio;
+
+        // Si la altura calculada es mayor que el contenedor, ajustar por altura
+        if (height > maxHeight) {
+            height = maxHeight;
+            width = height * aspectRatio;
+        }
 
         // Configurar canvas de la prenda
         const garmentCanvas = garmentCanvasRef.current;
@@ -158,7 +246,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
 📍 Posición: ${Math.round(design.designPosition.x)}%, ${Math.round(design.designPosition.y)}%
 🔄 Rotación: ${design.designRotation}°
 
-💰 Precio: $${design.price.toLocaleString()}
+💰 Precio: ${formatPrice(design.price)}
 
 ¿Podrían ayudarme con este pedido personalizado?`;
 
@@ -181,10 +269,10 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
                     {/* Wrapper con estilos exactos de Kittl */}
                     <div
                         data-testid="mockup-canvas-wrapper"
-                        className="relative aspect-[3/4] bg-gray-100 overflow-hidden border border-gray-200 rounded-lg"
+                        className="relative bg-gray-100 overflow-hidden border border-gray-200 rounded-lg"
                         style={{
                             width: '100%',
-                            height: '500px',
+                            aspectRatio: '3/4',
                             position: 'relative',
                             filter: 'blur(0px)'
                         }}
@@ -280,7 +368,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
                         <div className="border-t border-gray-200 pt-4">
                             <div className="flex justify-between text-lg">
                                 <span className="font-light text-black">Total:</span>
-                                <span className="font-light text-black">${design.price.toLocaleString()}</span>
+                                <span className="font-light text-black">{formatPrice(design.price)}</span>
                             </div>
                         </div>
                     </div>
@@ -307,7 +395,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
                         </button>
 
                         <button
-                            onClick={onComplete}
+                            onClick={handleSaveDesign}
                             className="w-full bg-black text-white py-4 px-6 font-light text-sm tracking-wide hover:bg-gray-800 transition-colors flex items-center justify-center space-x-3"
                         >
                             <Check className="h-5 w-5" />

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { RotateCw, Move, Maximize2, Eye, EyeOff } from 'lucide-react';
 import { GarmentType, Design, DesignSize } from '../types/Design';
-import { getBaseGarmentImage, applyColorFilter, getGarmentTemplate } from '../data/garmentImages';
+import { getGarmentTemplate, hasBackView } from '../data/garmentImages';
 
 interface SmoothCanvasPreviewProps {
     garmentType: GarmentType | null;
@@ -260,13 +260,15 @@ const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-light text-black">Vista previa</h3>
-                <button
-                    onClick={() => setShowBack(!showBack)}
-                    className="flex items-center space-x-2 text-sm text-gray-600 hover:text-black transition-colors"
-                >
-                    {showBack ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    <span>{showBack ? 'Frente' : 'Dorso'}</span>
-                </button>
+                {garmentType && hasBackView(garmentType.id) && (
+                    <button
+                        onClick={() => setShowBack(!showBack)}
+                        className="flex items-center space-x-2 text-sm text-gray-600 hover:text-black transition-colors"
+                    >
+                        {showBack ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        <span>{showBack ? 'Frente' : 'Dorso'}</span>
+                    </button>
+                )}
             </div>
 
             <div className="text-sm text-gray-600 font-light mb-4">

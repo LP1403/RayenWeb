@@ -6,6 +6,7 @@ import ContactForm from './components/ContactForm';
 import ProductCatalog from './components/ProductCatalog';
 import ProductDetail from './components/ProductDetail';
 import DesignWizard from './components/DesignWizard';
+import SavedDesigns from './components/SavedDesigns';
 import { products } from './data/products';
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/catalog" element={<CatalogView />} />
         <Route path="/product/:id" element={<ProductDetailView />} />
         <Route path="/design" element={<DesignWizard />} />
+        <Route path="/saved-designs" element={<SavedDesignsView />} />
         <Route path="/contact" element={<ContactForm />} />
       </Routes>
     </Router>
@@ -46,6 +48,17 @@ function ProductDetailView() {
   const product = products.find(p => p.id === Number(id));
   if (!product) return <div className="p-8">Producto no encontrado</div>;
   return <ProductDetail product={product} onBack={() => navigate('/catalog')} />;
+}
+
+function SavedDesignsView() {
+  const navigate = useNavigate();
+
+  const handleLoadDesign = (design: unknown) => {
+    // Navegar al diseñador con los datos del diseño
+    navigate('/design', { state: { loadDesign: design } });
+  };
+
+  return <SavedDesigns onLoadDesign={handleLoadDesign} />;
 }
 
 export default App;

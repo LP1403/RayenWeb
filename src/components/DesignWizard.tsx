@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { garmentTypes, designs, designSizes, predesignedItems } from '../data/designData';
-import { GarmentType, Design, DesignSize, PredesignedItem, CustomDesign } from '../types/Design';
+import { garmentTypes, designs, designSizes } from '../data/designData';
+import { GarmentType, Design, DesignSize, CustomDesign } from '../types/Design';
 import DesignPreview from './DesignPreview';
 import DesignCheckout from './DesignCheckout';
 
@@ -41,14 +41,7 @@ const DesignWizard: React.FC = () => {
         }
     };
 
-    const handlePredesignedSelect = (item: PredesignedItem) => {
-        setSelectedGarment(garmentTypes.find(g => g.id === item.garmentType) || null);
-        setSelectedDesign(item.design);
-        setSelectedColor(item.garmentColor);
-        setSelectedSize(designSizes.find(s => s.id === item.designSize) || designSizes[1]);
-        setDesignPosition(item.designPosition);
-        setDesignRotation(0);
-    };
+    // Función de prediseños removida temporalmente
 
     const getCurrentDesign = (): CustomDesign => ({
         garmentType: selectedGarment?.id || '',
@@ -57,7 +50,7 @@ const DesignWizard: React.FC = () => {
         designSize: selectedSize.id,
         designPosition,
         designRotation,
-        price: selectedGarment ? (selectedGarment.id === 'remera' ? 15900 : 22900) : 0,
+        price: 0, // A confirmar
         createdAt: new Date()
     });
 
@@ -166,44 +159,7 @@ const DesignWizard: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Prediseñadas en horizontal */}
-                                <div>
-                                    <h3 className="text-lg font-light text-black mb-4">Inspiración</h3>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <button
-                                            key={predesignedItems[0].id}
-                                            onClick={() => handlePredesignedSelect(predesignedItems[0])}
-                                            className="p-3 border border-gray-200 hover:border-gray-300 transition-colors text-center"
-                                        >
-                                            <div className="aspect-square bg-gray-100 mb-2 overflow-hidden relative">
-                                                {/* Mockup blanco si corresponde */}
-                                                {predesignedItems[0].garmentColor === '#FFFFFF' ? (
-                                                    <img
-                                                        src={garmentTypes.find(g => g.id === predesignedItems[0].garmentType)?.baseImage}
-                                                        alt={predesignedItems[0].name}
-                                                        className="w-full h-full object-cover absolute top-0 left-0"
-                                                    />
-                                                ) : (
-                                                    <img
-                                                        src={predesignedItems[0].image}
-                                                        alt={predesignedItems[0].name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                )}
-                                                {/* Diseño SVG encima si es blanco */}
-                                                {predesignedItems[0].garmentColor === '#FFFFFF' && (
-                                                    <img
-                                                        src={predesignedItems[0].design.image}
-                                                        alt={predesignedItems[0].design.name}
-                                                        className="w-full h-full object-contain absolute top-0 left-0"
-                                                    />
-                                                )}
-                                            </div>
-                                            <h4 className="text-xs font-light text-black">{predesignedItems[0].name}</h4>
-                                            <p className="text-xs text-gray-600">${predesignedItems[0].price.toLocaleString()}</p>
-                                        </button>
-                                    </div>
-                                </div>
+                                {/* Sección de inspiración removida temporalmente */}
                             </div>
 
                             {/* Preview - 40% */}

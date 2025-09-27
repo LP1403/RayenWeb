@@ -62,6 +62,19 @@ const Header: React.FC = () => {
               DISEÑA
             </button>
             <button
+              onClick={() => navigate('/saved-designs')}
+              className={`text-sm font-light tracking-wide transition-colors ${location.pathname === '/saved-designs'
+                ? isHome
+                  ? 'text-white border-b-2 border-white pb-1'
+                  : 'text-black border-b-2 border-black pb-1'
+                : isHome
+                  ? 'text-white/70 hover:text-white'
+                  : 'text-gray-500 hover:text-black'
+                }`}
+            >
+              MIS DISEÑOS
+            </button>
+            <button
               onClick={() => navigate('/contact')}
               className={`text-sm font-light tracking-wide transition-colors ${location.pathname === '/contact'
                 ? isHome

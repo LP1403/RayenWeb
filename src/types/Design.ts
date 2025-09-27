@@ -32,7 +32,7 @@ export interface PredesignedItem {
 }
 
 export interface CustomDesign {
-    id?: string;
+    id: string;
     garmentType: string;
     garmentColor: string;
     selectedDesign: Design | null;
@@ -41,4 +41,6 @@ export interface CustomDesign {
     designRotation: number;
     price: number;
     createdAt: Date;
+    previewImage?: string; // Imagen del preview generada
+    showBack?: boolean; // Si se estaba mostrando el dorso
 }

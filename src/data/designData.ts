@@ -17,9 +17,9 @@ export const garmentTypes: GarmentType[] = [
 ];
 
 export const designSizes: DesignSize[] = [
-    { id: 'small', name: 'Chico', scale: 0.8 },
-    { id: 'medium', name: 'Mediano', scale: 1.5 },
-    { id: 'large', name: 'Grande', scale: 2.0 }
+    { id: 'small', name: 'Chico', scale: 0.6 },
+    { id: 'medium', name: 'Mediano', scale: 1.0 },
+    { id: 'large', name: 'Grande', scale: 1.6 }
 ];
 
 export const designs: Design[] = [
@@ -65,38 +65,5 @@ export const designs: Design[] = [
     }
 ];
 
-export const predesignedItems: PredesignedItem[] = [
-    {
-        id: 1,
-        name: 'Clásico Urbano',
-        garmentType: 'remera',
-        design: designs[0],
-        garmentColor: '#000000',
-        designSize: 'medium',
-        designPosition: { x: 50, y: 30 },
-        price: 18900,
-        image: `${import.meta.env.BASE_URL}predesigned/clasico-urbano.svg`
-    },
-    {
-        id: 2,
-        name: 'Vintage Style',
-        garmentType: 'buzo',
-        design: designs[3],
-        garmentColor: '#6B7280',
-        designSize: 'large',
-        designPosition: { x: 50, y: 25 },
-        price: 25900,
-        image: `${import.meta.env.BASE_URL}predesigned/vintage-style.svg`
-    },
-    {
-        id: 3,
-        name: 'Modern Minimal',
-        garmentType: 'remera',
-        design: designs[4],
-        garmentColor: '#FFFFFF',
-        designSize: 'small',
-        designPosition: { x: 50, y: 35 },
-        price: 16900,
-        image: `${import.meta.env.BASE_URL}predesigned/modern-minimal.svg`
-    }
-];
+// Prediseños removidos temporalmente - se desarrollarán en otro momento
+export const predesignedItems: PredesignedItem[] = [];

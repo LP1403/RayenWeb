@@ -1,23 +1,27 @@
-// Sistema de templates por color - Mockups profesionales
+// Sistema dinámico de templates - Usa imágenes reales del proyecto
 export const garmentTemplates = {
     remera: {
         front: {
-            blanco: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
-            negro: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
-            gris: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+            blanco: `${import.meta.env.BASE_URL}Mock remera gato color- blanco frente.jpg`,
+            negro: `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`,
+            gris: `${import.meta.env.BASE_URL}Mock remera gato color- verde frente osc.jpg`
         },
-        back: null // Remera no tiene vista de dorso
+        back: {
+            blanco: `${import.meta.env.BASE_URL}Mock remera gato color- blanco.jpg`,
+            negro: `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`,
+            gris: `${import.meta.env.BASE_URL}Mock remera gato color- verde osc.jpg`
+        }
     },
     buzo: {
         front: {
-            blanco: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
-            negro: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
-            gris: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+            blanco: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige frente.jpg`,
+            negro: `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`,
+            gris: `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
         },
         back: {
-            blanco: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
-            negro: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
-            gris: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+            blanco: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige.jpg`,
+            negro: `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
+            gris: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`
         }
     }
 };
@@ -39,11 +43,56 @@ export const getGarmentTemplate = (garmentId: string, color: string, isBack: boo
     const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
     if (templates) {
         const side = isBack ? 'back' : 'front';
+
+        // Si no hay imagen de dorso, usar la de frente
+        if (isBack && !templates.back) {
+            const colorKey = color.toLowerCase() as keyof typeof templates['front'];
+            return templates['front'][colorKey] || templates['front']['blanco'];
+        }
+
         const colorKey = color.toLowerCase() as keyof typeof templates['front'];
         return templates[side][colorKey] || templates[side]['blanco'];
     }
     // Fallback image if not found
     return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
+};
+
+// Función para detectar automáticamente si hay imágenes de dorso
+export const hasBackView = (garmentId: string): boolean => {
+    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
+    if (!templates || !templates.back) return false;
+    
+    // Verificar si las URLs de dorso contienen palabras clave de dorso
+    const backUrls = Object.values(templates.back);
+    const hasBackKeywords = backUrls.some(url => 
+        detectBackViewFromFilename(url) || 
+        url.includes('espalda') || 
+        url.includes('dorso') || 
+        url.includes('back')
+    );
+    
+    return hasBackKeywords;
+};
+
+// Función para detectar automáticamente imágenes de dorso basándose en nombres de archivo
+export const detectBackViewFromFilename = (filename: string): boolean => {
+    const backKeywords = ['dorso', 'back', 'espalda', 'rear', 'posterior'];
+    const frontKeywords = ['frente', 'front', 'frontal', 'anterior'];
+    
+    const lowerFilename = filename.toLowerCase();
+    
+    // Si contiene palabras de dorso, es dorso
+    if (backKeywords.some(keyword => lowerFilename.includes(keyword))) {
+        return true;
+    }
+    
+    // Si contiene palabras de frente, es frente
+    if (frontKeywords.some(keyword => lowerFilename.includes(keyword))) {
+        return false;
+    }
+    
+    // Por defecto, asumir que es frente
+    return false;
 };
 
 // Función para obtener la imagen base de una prenda (MANTENER COMPATIBILIDAD)
