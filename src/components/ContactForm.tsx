@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MessageCircle, Send, Check, MapPin, Clock } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG } from '../config/emailjs';
 
 const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -16,14 +18,37 @@ const ContactForm: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simular envío del formulario
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', message: '' });
-    }, 3000);
+
+    try {
+      // Parámetros del email
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_email: EMAILJS_CONFIG.TO_EMAIL
+      };
+
+      // Enviar email usando EmailJS
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+
+      // Mostrar confirmación
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', email: '', message: '' });
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error al enviar email:', error);
+      alert('Error al enviar el mensaje. Por favor, intenta nuevamente o contacta por WhatsApp.');
+    }
   };
 
   return (
@@ -159,7 +184,7 @@ const ContactForm: React.FC = () => {
                 </div>
                 <div className="text-gray-600 font-light text-sm">
                   <p>Buenos Aires, Argentina</p>
-                  <p>Envíos a todo el país</p>
+                  <p>Envíos en Buenos Aires, próximamente todo el país</p>
                 </div>
               </div>
             </div>
