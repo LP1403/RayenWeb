@@ -3,6 +3,7 @@ export interface Design {
     name: string;
     image: string;
     category: 'graphic' | 'text' | 'logo';
+    customScale?: number; // Escala personalizada (opcional, por defecto 1.0)
 }
 
 export interface GarmentType {

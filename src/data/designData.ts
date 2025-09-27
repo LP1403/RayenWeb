@@ -1,17 +1,17 @@
 import { Design, GarmentType, DesignSize, PredesignedItem } from '../types/Design';
-import { getBaseGarmentImage } from './garmentImages';
+import { getGarmentTemplate } from './garmentImages';
 
 export const garmentTypes: GarmentType[] = [
     {
         id: 'remera',
         name: 'Remera',
-        baseImage: getBaseGarmentImage('remera', false),
+        baseImage: getGarmentTemplate('remera', 'blanco', false),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     },
     {
         id: 'buzo',
         name: 'Buzo',
-        baseImage: getBaseGarmentImage('buzo', false),
+        baseImage: getGarmentTemplate('buzo', 'blanco', false),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     }
 ];
@@ -27,25 +27,29 @@ export const designs: Design[] = [
         id: 1,
         name: 'Logo Minimalista',
         image: `${import.meta.env.BASE_URL}designs/logo-minimalista.svg`,
-        category: 'logo'
+        category: 'logo',
+        customScale: 1.0 // Escala personalizada para logos
     },
     {
         id: 2,
         name: 'Geometría Abstracta',
         image: `${import.meta.env.BASE_URL}designs/geometria-abstracta.svg`,
-        category: 'graphic'
+        category: 'graphic',
+        customScale: 1.4 // Escala personalizada para gráficos
     },
     {
         id: 3,
         name: 'Tipografía Bold',
         image: `${import.meta.env.BASE_URL}designs/tipografia-bold.svg`,
-        category: 'text'
+        category: 'text',
+        customScale: 1.4
     },
     {
         id: 4,
         name: 'Patrón Vintage',
         image: `${import.meta.env.BASE_URL}designs/patron-vintage.svg`,
-        category: 'graphic'
+        category: 'graphic',
+        customScale: 1.1 // Escala personalizada para patrones
     },
     {
         id: 5,

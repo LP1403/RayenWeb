@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Check, ShoppingBag } from 'lucide-react';
 import { CustomDesign } from '../types/Design';
-import { getBaseGarmentImage, applyColorFilter } from '../data/garmentImages';
+import { getBaseGarmentImage, applyColorFilter, getGarmentTemplate } from '../data/garmentImages';
 
 interface DesignCheckoutProps {
     design: CustomDesign;
@@ -73,10 +73,16 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
             // Dibujar la imagen base
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // Aplicar filtro de color
-            applyColorFilter(ctx, design.garmentColor);
+            // Ya no necesitamos aplicar filtro de color porque usamos templates específicos
+            // applyColorFilter(ctx, design.garmentColor);
         };
-        img.src = getBaseGarmentImage(design.garmentType);
+
+        // Convertir color hex a nombre para el template
+        const colorName = design.garmentColor === '#FFFFFF' ? 'blanco' :
+            design.garmentColor === '#000000' ? 'negro' :
+                design.garmentColor === '#6B7280' ? 'gris' : 'blanco';
+
+        img.src = getGarmentTemplate(design.garmentType, colorName, false);
     }, [design.garmentType, design.garmentColor]);
 
     // Función para dibujar el canvas del diseño
@@ -97,10 +103,13 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
             // Calcular posición y tamaño
             const x = (design.designPosition.x / 100) * canvas.width;
             const y = (design.designPosition.y / 100) * canvas.height;
+
+            // Aplicar escala personalizada si está disponible
+            const customScale = design.selectedDesign?.customScale || 1.0;
             const size = Math.min(canvas.width, canvas.height) * 0.15 * (
                 design.designSize === 'small' ? 0.8 :
                     design.designSize === 'medium' ? 1.5 : 2.0
-            );
+            ) * customScale;
 
             // Guardar contexto
             ctx.save();

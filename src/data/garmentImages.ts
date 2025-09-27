@@ -1,4 +1,28 @@
-// Imágenes base de las prendas (usando URLs de Unsplash para mockups blancos)
+// Sistema de templates por color - Mockups profesionales
+export const garmentTemplates = {
+    remera: {
+        front: {
+            blanco: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+            negro: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
+            gris: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+        },
+        back: null // Remera no tiene vista de dorso
+    },
+    buzo: {
+        front: {
+            blanco: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+            negro: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
+            gris: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+        },
+        back: {
+            blanco: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+            negro: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-100&brightness=-50',
+            gris: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80&sat=-50&brightness=-25'
+        }
+    }
+};
+
+// Imágenes base de las prendas (usando URLs de Unsplash para mockups blancos) - MANTENER COMPATIBILIDAD
 export const baseGarmentImages = {
     remera: {
         front: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
@@ -10,7 +34,19 @@ export const baseGarmentImages = {
     }
 };
 
-// Función para obtener la imagen base de una prenda
+// Función para obtener template por color
+export const getGarmentTemplate = (garmentId: string, color: string, isBack: boolean = false) => {
+    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
+    if (templates) {
+        const side = isBack ? 'back' : 'front';
+        const colorKey = color.toLowerCase() as keyof typeof templates['front'];
+        return templates[side][colorKey] || templates[side]['blanco'];
+    }
+    // Fallback image if not found
+    return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
+};
+
+// Función para obtener la imagen base de una prenda (MANTENER COMPATIBILIDAD)
 export const getBaseGarmentImage = (garmentId: string, isBack: boolean = false) => {
     const garmentTypeImages = baseGarmentImages[garmentId as keyof typeof baseGarmentImages];
     if (garmentTypeImages) {
@@ -56,5 +92,5 @@ export const applyColorFilter = (ctx: CanvasRenderingContext2D, color: string) =
 
 // Función para obtener la imagen base (mantener compatibilidad)
 export const getGarmentImage = (garmentId: string, _color: string, isBack: boolean = false) => {
-  return getBaseGarmentImage(garmentId, isBack);
+    return getBaseGarmentImage(garmentId, isBack);
 };

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { RotateCw, Move, Maximize2, Eye, EyeOff } from 'lucide-react';
 import { GarmentType, Design, DesignSize } from '../types/Design';
-import { getBaseGarmentImage, applyColorFilter } from '../data/garmentImages';
+import { getBaseGarmentImage, applyColorFilter, getGarmentTemplate } from '../data/garmentImages';
 
 interface SmoothCanvasPreviewProps {
     garmentType: GarmentType | null;
@@ -52,8 +52,8 @@ const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
             // Dibujar la imagen base
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // Aplicar filtro de color
-            applyColorFilter(ctx, garmentColor);
+            // Ya no necesitamos aplicar filtro de color porque usamos templates específicos
+            // applyColorFilter(ctx, garmentColor);
 
             setGarmentImageLoaded(true);
         };
@@ -61,7 +61,12 @@ const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
             console.error('Error loading garment image');
             setGarmentImageLoaded(true);
         };
-        img.src = getBaseGarmentImage(garmentType.id, showBack);
+        // Convertir color hex a nombre para el template
+        const colorName = garmentColor === '#FFFFFF' ? 'blanco' :
+            garmentColor === '#000000' ? 'negro' :
+                garmentColor === '#6B7280' ? 'gris' : 'blanco';
+
+        img.src = getGarmentTemplate(garmentType.id, colorName, showBack);
     }, [garmentType, garmentColor, showBack]);
 
     // Función para dibujar el canvas del diseño (SOLO UNA VEZ - sin redibujar durante drag)
@@ -82,7 +87,10 @@ const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
             // Calcular posición y tamaño
             const x = (designPosition.x / 100) * canvas.width;
             const y = (designPosition.y / 100) * canvas.height;
-            const size = Math.min(canvas.width, canvas.height) * 0.15 * designSize.scale;
+
+            // Aplicar escala personalizada si está disponible
+            const customScale = selectedDesign.customScale || 1.0;
+            const size = Math.min(canvas.width, canvas.height) * 0.15 * designSize.scale * customScale;
 
             // Guardar contexto
             ctx.save();
@@ -334,8 +342,8 @@ const SmoothCanvasPreview: React.FC<SmoothCanvasPreviewProps> = ({
                                 left: `${designPosition.x}%`,
                                 top: `${designPosition.y}%`,
                                 transform: 'translate(-50%, -50%)',
-                                width: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale}px`,
-                                height: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale}px`,
+                                width: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale * (selectedDesign?.customScale || 1.0)}px`,
+                                height: `${Math.min(containerSize.width, containerSize.height) * 0.15 * designSize.scale * (selectedDesign?.customScale || 1.0)}px`,
                                 pointerEvents: 'none',
                                 zIndex: 10
                             }}
