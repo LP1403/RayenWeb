@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "rayenweb-b321c"
+  },
+  "targets": {
+    "rayenweb-b321c": {
+      "hosting": {
+        "web": [
+          "rayenweb-b321c"
+        ],
+        "admin": [
+          "rayenweb-b321c"
+        ]
+      }
+    }
+  }
+}

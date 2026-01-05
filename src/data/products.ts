@@ -1,28 +1,8 @@
 import { Product } from '../types/Product';
 
 export const products: Product[] = [
-  // {
-  //   id: 1,
-  //   name: "Remera Básica Premium",
-  //   category: "remera",
-  //   sizes: ["S", "M", "L", "XL", "XXL"],
-  //   colors: ["Negro", "Blanco", "Gris"],
-  //   price: 15900,
-  //   images: [
-  //     "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
-  //     "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg",
-  //     "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg"
-  //   ],
-  //   description: "Remera de algodón 100% premium, perfecta para el uso diario. Corte clásico que sienta bien en cualquier ocasión. Confeccionada con materiales de alta calidad que garantizan durabilidad y comodidad.",
-  //   featured: true,
-  //   material: "100% Algodón Premium",
-  //   care: "Lavar a máquina con agua fría. No usar blanqueador.",
-  //   carouselImages: [
-  //     "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg",
-  //     "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg"
-
   {
-    id: 2,
+    id: "2",
     name: "Buzo Gato Psycho",
     category: "buzo",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -45,10 +25,23 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
       `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 31, // Suma de todos los talles disponibles
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   {
-    id: 3,
+    id: "3",
     name: "Buzo Gato Colores",
     category: "buzo",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -75,10 +68,23 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`,
       `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 20,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   {
-    id: 4,
+    id: "4",
     name: "Buzo Serpiente Negro",
     category: "buzo",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -88,6 +94,12 @@ export const products: Product[] = [
       `${import.meta.env.BASE_URL}Mock buzo serpiente-Espalda.jpg`,
       `${import.meta.env.BASE_URL}Mock buzo serpiente-frente.jpg`
     ],
+    imagesByColor: {
+      "Negro": [
+        `${import.meta.env.BASE_URL}Mock buzo serpiente-Espalda.jpg`,
+        `${import.meta.env.BASE_URL}Mock buzo serpiente-frente.jpg`
+      ]
+    },
     description: "Buzo negro con diseño de serpiente, confeccionado en algodón premium. Perfecto para quienes buscan un estilo audaz y cómodo.",
     featured: true,
     material: "100% Algodón Premium",
@@ -95,11 +107,24 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock buzo serpiente-Espalda.jpg`,
       `${import.meta.env.BASE_URL}Mock buzo serpiente-frente.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 15,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   // Eliminado porque está incluido en el producto anterior con variantes de color
   {
-    id: 6,
+    id: "6",
     name: "Remera Flor Negra",
     category: "remera",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -109,6 +134,12 @@ export const products: Product[] = [
       `${import.meta.env.BASE_URL}Mock up remera negra frente-Flor.jpg`,
       `${import.meta.env.BASE_URL}Mock up remera negra espalda-Flor.jpg`
     ],
+    imagesByColor: {
+      "Negro": [
+        `${import.meta.env.BASE_URL}Mock up remera negra frente-Flor.jpg`,
+        `${import.meta.env.BASE_URL}Mock up remera negra espalda-Flor.jpg`
+      ]
+    },
     description: "Remera negra con diseño de flor, confeccionada en algodón premium. Elegancia y comodidad en una sola prenda.",
     featured: true,
     material: "100% Algodón Premium",
@@ -116,10 +147,23 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock up remera negra frente-Flor.jpg`,
       `${import.meta.env.BASE_URL}Mock up remera negra espalda-Flor.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 12,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   {
-    id: 7,
+    id: "7",
     name: "Remera Araña Negra",
     category: "remera",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -129,6 +173,12 @@ export const products: Product[] = [
       `${import.meta.env.BASE_URL}Mock up remera negra espalda-Araña.jpg`,
       `${import.meta.env.BASE_URL}Mock up remera negra frente-Araña.jpg`
     ],
+    imagesByColor: {
+      "Negro": [
+        `${import.meta.env.BASE_URL}Mock up remera negra espalda-Araña.jpg`,
+        `${import.meta.env.BASE_URL}Mock up remera negra frente-Araña.jpg`
+      ]
+    },
     description: "Remera negra con diseño de araña, confeccionada en algodón premium. Un toque de originalidad para tu outfit diario.",
     featured: false,
     material: "100% Algodón Premium",
@@ -136,10 +186,23 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock up remera negra espalda-Araña.jpg`,
       `${import.meta.env.BASE_URL}Mock up remera negra frente-Araña.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 8,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   },
   {
-    id: 8,
+    id: "8",
     name: "Remera Gato Color",
     category: "remera",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -170,6 +233,19 @@ export const products: Product[] = [
     carouselImages: [
       `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`,
       `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`
-    ]
+    ],
+    // Información específica de talles para este producto
+    sizeInfo: {
+      "S": { available: true, stock: 4 },
+      "M": { available: true, stock: 6 },
+      "L": { available: true, stock: 5 },
+      "XL": { available: true, stock: 3 },
+      "XXL": { available: true, stock: 2 }
+    },
+    // Propiedades adicionales requeridas
+    stock: 10,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
   }
 ];

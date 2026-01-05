@@ -1,17 +1,45 @@
 export interface Product {
-  id: number;
-  name: string;
-  category: 'remera' | 'buzo' | 'pantalon' | 'short' | 'campera';
-  sizes: Array<'S' | 'M' | 'L' | 'XL' | 'XXL'>;
-  colors: string[];
-  price: number;
-  images: string[];
-  description: string;
-  featured: boolean;
-  material?: string;
-  care?: string;
-  carouselImages?: string[];
-  imagesByColor?: {
-    [color: string]: string[];
-  };
+    id: string;
+    productNumber?: number; // Número identificador incremental del producto
+    name: string;
+    category: string; // Ahora es dinámico, no limitado a valores específicos
+    price: number; // Precio de venta al cliente
+    cost: number; // Costo del producto (interno)
+    description: string;
+    images: string[];
+    sizes: string[];
+    colors: string[];
+    stock: number;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    // Campos adicionales para compatibilidad
+    featured?: boolean;
+    material?: string;
+    care?: string;
+    imagesByColor?: { [color: string]: string[] };
+    carouselImages?: string[];
+    sizeInfo?: { [size: string]: { available: boolean; stock: number } };
+}
+
+export interface CreateProductData {
+    name: string;
+    category: string; // Ahora es dinámico
+    price: number; // Precio de venta
+    cost: number; // Costo del producto
+    description: string;
+    images: string[];
+    sizes: string[];
+    colors: string[];
+    stock: number;
+    // Campos adicionales para compatibilidad
+    material?: string;
+    care?: string;
+    featured?: boolean;
+    imagesByColor?: { [color: string]: string[] };
+    carouselImages?: string[];
+}
+
+export interface UpdateProductData extends Partial<CreateProductData> {
+    isActive?: boolean;
 }

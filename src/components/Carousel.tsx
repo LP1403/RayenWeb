@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../types/Product';
 
@@ -9,23 +9,45 @@ interface CarouselProps {
 
 const Carousel: React.FC<CarouselProps> = ({ products, onProductClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  // Función para resetear el timer
+  const resetTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
       setCurrentIndex((prevIndex) =>
         prevIndex === products.length - 1 ? 0 : prevIndex + 1
       );
     }, 5000);
+  };
 
-    return () => clearInterval(interval);
+  useEffect(() => {
+    resetTimer();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [products.length]);
 
+  // Función para cambiar de imagen y resetear timer
+  const changeImage = (newIndex: number) => {
+    setCurrentIndex(newIndex);
+    resetTimer();
+  };
+
   const goToPrevious = () => {
-    setCurrentIndex(currentIndex === 0 ? products.length - 1 : currentIndex - 1);
+    const newIndex = currentIndex === 0 ? products.length - 1 : currentIndex - 1;
+    changeImage(newIndex);
   };
 
   const goToNext = () => {
-    setCurrentIndex(currentIndex === products.length - 1 ? 0 : currentIndex + 1);
+    const newIndex = currentIndex === products.length - 1 ? 0 : currentIndex + 1;
+    changeImage(newIndex);
   };
 
   if (products.length === 0) return null;
@@ -102,7 +124,7 @@ const Carousel: React.FC<CarouselProps> = ({ products, onProductClick }) => {
             {products.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => changeImage(index)}
                 className={`h-px transition-all duration-300 ${index === currentIndex ? 'bg-black w-8' : 'bg-gray-300 hover:bg-gray-400 w-4'
                   }`}
               />

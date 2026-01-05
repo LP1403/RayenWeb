@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Upload } from 'lucide-react';
 import { garmentTypes, designs, designSizes } from '../data/designData';
 import { GarmentType, Design, DesignSize, CustomDesign } from '../types/Design';
 import DesignPreview from './DesignPreview';
 import DesignCheckout from './DesignCheckout';
+import CustomDesignUpload from './CustomDesignUpload';
 
 // Sin props, usa useNavigate
 const DesignWizard: React.FC = () => {
@@ -12,15 +13,21 @@ const DesignWizard: React.FC = () => {
     const [selectedGarment, setSelectedGarment] = useState<GarmentType | null>(null);
     const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
     const [selectedColor, setSelectedColor] = useState<string>('');
-    // Cuando se selecciona prenda, setear color blanco si es el único disponible
+    const [customDesignUrl, setCustomDesignUrl] = useState<string | null>(null);
+    const [showCustomUpload, setShowCustomUpload] = useState(false);
+    // Colores disponibles con mockups (solo blanco y negro)
+    const availableColors = ['#FFFFFF', '#000000'];
+
+    // Cuando se selecciona prenda, setear color por defecto
     const handleGarmentSelect = (garment: GarmentType) => {
         setSelectedGarment(garment);
-        if (garment.colors.length === 1) {
-            setSelectedColor(garment.colors[0]);
-        } else if (garment.colors.includes('#FFFFFF')) {
+        // Priorizar blanco, luego negro, luego el primero disponible
+        if (availableColors.includes('#FFFFFF')) {
             setSelectedColor('#FFFFFF');
+        } else if (availableColors.includes('#000000')) {
+            setSelectedColor('#000000');
         } else {
-            setSelectedColor(garment.colors[0] || '');
+            setSelectedColor(availableColors[0] || '');
         }
     };
     const [selectedSize, setSelectedSize] = useState<DesignSize>(designSizes[1]); // Medium por defecto
@@ -41,9 +48,39 @@ const DesignWizard: React.FC = () => {
         }
     };
 
+    // Manejar subida de diseño personalizado
+    const handleCustomDesignUpload = (file: File, previewUrl: string) => {
+        setCustomDesignUrl(previewUrl);
+
+        // Crear un objeto Design personalizado
+        const customDesign: Design = {
+            id: Date.now(), // ID único temporal
+            name: file.name,
+            image: previewUrl,
+            category: 'graphic',
+            customScale: 1.0,
+            isCustom: true,
+            originalFile: file
+        };
+
+        setSelectedDesign(customDesign);
+        setShowCustomUpload(false);
+    };
+
+    // Manejar remoción de diseño personalizado
+    const handleCustomDesignRemove = () => {
+        if (customDesignUrl) {
+            URL.revokeObjectURL(customDesignUrl);
+        }
+        setCustomDesignUrl(null);
+        setSelectedDesign(null);
+        setShowCustomUpload(false);
+    };
+
     // Función de prediseños removida temporalmente
 
     const getCurrentDesign = (): CustomDesign => ({
+        id: `design-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         garmentType: selectedGarment?.id || '',
         garmentColor: selectedColor,
         selectedDesign,
@@ -104,11 +141,45 @@ const DesignWizard: React.FC = () => {
                             <div className="lg:col-span-3 space-y-6">
                                 <div>
                                     <h3 className="text-lg font-light text-black mb-4">Selecciona un diseño</h3>
+
+                                    {/* Botón para subir diseño personalizado */}
+                                    <div className="mb-4">
+                                        <button
+                                            onClick={() => setShowCustomUpload(!showCustomUpload)}
+                                            className={`w-full p-4 border-2 border-dashed transition-all duration-300 ${showCustomUpload
+                                                ? 'border-blue-500 bg-blue-50'
+                                                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <div className="flex items-center justify-center space-x-2">
+                                                <Upload className="h-5 w-5 text-gray-400" />
+                                                <span className="text-sm font-medium text-gray-700">
+                                                    {showCustomUpload ? 'Ocultar subida personalizada' : 'Subir tu propio diseño'}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </div>
+
+                                    {/* Componente de subida personalizada */}
+                                    {showCustomUpload && (
+                                        <div className="mb-6">
+                                            <CustomDesignUpload
+                                                onDesignUpload={handleCustomDesignUpload}
+                                                onRemove={handleCustomDesignRemove}
+                                                className="mb-4"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Diseños predefinidos */}
                                     <div className="grid grid-cols-3 gap-4">
                                         {designs.map((design) => (
                                             <button
                                                 key={design.id}
-                                                onClick={() => setSelectedDesign(design)}
+                                                onClick={() => {
+                                                    setSelectedDesign(design);
+                                                    setShowCustomUpload(false);
+                                                }}
                                                 className={`p-3 border-2 transition-all duration-300 ${selectedDesign?.id === design.id
                                                     ? 'border-black bg-gray-50'
                                                     : 'border-gray-200 hover:border-gray-300'
@@ -127,15 +198,25 @@ const DesignWizard: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/* Colores - Solo blanco, negro, gris */}
+                                {/* Colores disponibles con mockups (solo blanco y negro) */}
                                 <div>
                                     <h3 className="text-lg font-light text-black mb-4">Color de la prenda</h3>
                                     <div className="flex gap-4">
+                                        {/* Blanco */}
                                         <button
                                             key="#FFFFFF"
                                             onClick={() => setSelectedColor('#FFFFFF')}
                                             className={`w-16 h-16 border-2 transition-all duration-300 ${selectedColor === '#FFFFFF' ? 'border-black scale-110' : 'border-gray-300'}`}
                                             style={{ backgroundColor: '#FFFFFF' }}
+                                            title="Blanco"
+                                        />
+                                        {/* Negro */}
+                                        <button
+                                            key="#000000"
+                                            onClick={() => setSelectedColor('#000000')}
+                                            className={`w-16 h-16 border-2 transition-all duration-300 ${selectedColor === '#000000' ? 'border-black scale-110' : 'border-gray-300'}`}
+                                            style={{ backgroundColor: '#000000' }}
+                                            title="Negro"
                                         />
                                     </div>
                                 </div>
@@ -156,6 +237,11 @@ const DesignWizard: React.FC = () => {
                                                 {size.name}
                                             </button>
                                         ))}
+                                    </div>
+                                    <div className="mt-3 text-xs text-gray-500">
+                                        <p>• Chico: 10x10 cm</p>
+                                        <p>• Mediano: 20x20 cm</p>
+                                        <p>• Grande: 40x40 cm</p>
                                     </div>
                                 </div>
 

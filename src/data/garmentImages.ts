@@ -2,27 +2,25 @@
 export const garmentTemplates = {
     remera: {
         front: {
-            blanco: `${import.meta.env.BASE_URL}Mock remera gato color- blanco frente.jpg`,
-            negro: `${import.meta.env.BASE_URL}Mock remera gato color-Frente Negro.jpg`,
-            gris: `${import.meta.env.BASE_URL}Mock remera gato color- verde frente osc.jpg`
+            blanco: '/MockBlanco.jpg',
+            negro: '/MockNegro.jpg',
         },
-        back: {
-            blanco: `${import.meta.env.BASE_URL}Mock remera gato color- blanco.jpg`,
-            negro: `${import.meta.env.BASE_URL}Mock remera gato color-Negro.jpg`,
-            gris: `${import.meta.env.BASE_URL}Mock remera gato color- verde osc.jpg`
-        }
+        /*back: {
+            blanco: '/Mock remera gato color- blanco.jpg',
+            negro: '/Mock remera gato color-Negro.jpg',
+            gris: '/Mock remera gato color- verde osc.jpg'
+        }*/
     },
     buzo: {
         front: {
-            blanco: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige frente.jpg`,
-            negro: `${import.meta.env.BASE_URL}Mock up buzo gato negro-frente Negro.jpg`,
-            gris: `${import.meta.env.BASE_URL}Mock buzo gato lentes-frente Marron osc.jpg`
+            blanco: '/Mock buzo gato lentes-Beige frente.jpg',
+            negro: '/Mock up buzo gato negro-frente Negro.jpg',
         },
-        back: {
-            blanco: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Beige.jpg`,
-            negro: `${import.meta.env.BASE_URL}Mock up buzo gato negro-Espalda Negro.jpg`,
-            gris: `${import.meta.env.BASE_URL}Mock buzo gato lentes-Marron osc.jpg`
-        }
+        /*back: {
+            blanco: '/Mock buzo gato lentes-Beige.jpg',
+            negro: '/Mock up buzo gato negro-Espalda Negro.jpg',
+            gris: '/Mock buzo gato lentes-Marron osc.jpg'
+        }*/
     }
 };
 
@@ -39,17 +37,11 @@ export const baseGarmentImages = {
 };
 
 // Función para obtener template por color
-export const getGarmentTemplate = (garmentId: string, color: string, isBack: boolean = false) => {
+export const getGarmentTemplate = (garmentId: string, color: string) => {
     const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
     if (templates) {
-        const side = isBack ? 'back' : 'front';
-
-        // Si no hay imagen de dorso, usar la de frente
-        if (isBack && !templates.back) {
-            const colorKey = color.toLowerCase() as keyof typeof templates['front'];
-            return templates['front'][colorKey] || templates['front']['blanco'];
-        }
-
+        // Solo usar front por ahora, ya que back está comentado
+        const side = 'front';
         const colorKey = color.toLowerCase() as keyof typeof templates['front'];
         return templates[side][colorKey] || templates[side]['blanco'];
     }
@@ -58,88 +50,50 @@ export const getGarmentTemplate = (garmentId: string, color: string, isBack: boo
 };
 
 // Función para detectar automáticamente si hay imágenes de dorso
-export const hasBackView = (garmentId: string): boolean => {
-    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
-    if (!templates || !templates.back) return false;
-    
-    // Verificar si las URLs de dorso contienen palabras clave de dorso
-    const backUrls = Object.values(templates.back);
-    const hasBackKeywords = backUrls.some(url => 
-        detectBackViewFromFilename(url) || 
-        url.includes('espalda') || 
-        url.includes('dorso') || 
-        url.includes('back')
-    );
-    
-    return hasBackKeywords;
-};
-
-// Función para detectar automáticamente imágenes de dorso basándose en nombres de archivo
-export const detectBackViewFromFilename = (filename: string): boolean => {
-    const backKeywords = ['dorso', 'back', 'espalda', 'rear', 'posterior'];
-    const frontKeywords = ['frente', 'front', 'frontal', 'anterior'];
-    
-    const lowerFilename = filename.toLowerCase();
-    
-    // Si contiene palabras de dorso, es dorso
-    if (backKeywords.some(keyword => lowerFilename.includes(keyword))) {
-        return true;
-    }
-    
-    // Si contiene palabras de frente, es frente
-    if (frontKeywords.some(keyword => lowerFilename.includes(keyword))) {
-        return false;
-    }
-    
-    // Por defecto, asumir que es frente
+export const hasBackView = (): boolean => {
+    // Por ahora no hay imágenes de dorso disponibles
     return false;
 };
 
-// Función para obtener la imagen base de una prenda (MANTENER COMPATIBILIDAD)
-export const getBaseGarmentImage = (garmentId: string, isBack: boolean = false) => {
-    const garmentTypeImages = baseGarmentImages[garmentId as keyof typeof baseGarmentImages];
-    if (garmentTypeImages) {
-        return isBack ? garmentTypeImages.back : garmentTypeImages.front;
+// Función para obtener todas las imágenes disponibles de una prenda
+export const getAvailableGarmentImages = (garmentId: string) => {
+    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
+    if (!templates) return [];
+
+    return Object.keys(templates.front);
+};
+
+// Función para verificar si una imagen existe
+export const checkImageExists = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+    });
+};
+
+// Función para obtener la mejor imagen disponible
+export const getBestGarmentImage = async (garmentId: string, color: string) => {
+    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
+    if (!templates) return getGarmentTemplate(garmentId, color);
+
+    const side = 'front';
+    const colorKey = color.toLowerCase() as keyof typeof templates['front'];
+    const preferredImage = templates[side][colorKey];
+
+    if (preferredImage) {
+        const exists = await checkImageExists(preferredImage);
+        if (exists) return preferredImage;
     }
-    // Fallback image if not found
+
+    // Fallback a blanco si no existe la imagen del color
+    const fallbackImage = templates[side]['blanco'];
+    if (fallbackImage) {
+        const exists = await checkImageExists(fallbackImage);
+        if (exists) return fallbackImage;
+    }
+
+    // Último fallback
     return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
-};
-
-// Función para aplicar filtro de color a una imagen en canvas
-export const applyColorFilter = (ctx: CanvasRenderingContext2D, color: string) => {
-    // Convertir color hex a RGB
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-
-    // Para colores específicos, usar diferentes técnicas
-    if (color === '#FFFFFF') {
-        // Para blanco, usar overlay con opacidad baja
-        ctx.globalCompositeOperation = 'overlay';
-        ctx.globalAlpha = 0.3;
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    } else if (color === '#000000') {
-        // Para negro, usar multiply con opacidad
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    } else {
-        // Para gris y otros colores, usar color-burn
-        ctx.globalCompositeOperation = 'color-burn';
-        ctx.globalAlpha = 0.6;
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    }
-
-    // Restaurar configuración
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.globalAlpha = 1.0;
-};
-
-// Función para obtener la imagen base (mantener compatibilidad)
-export const getGarmentImage = (garmentId: string, _color: string, isBack: boolean = false) => {
-    return getBaseGarmentImage(garmentId, isBack);
 };

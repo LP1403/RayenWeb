@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, MessageCircle, Send, Check, MapPin, Clock } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from '../config/emailjs';
+import { useToast } from '../hooks/useToast';
 
 const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const ContactForm: React.FC = () => {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { success, error } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -39,15 +41,16 @@ const ContactForm: React.FC = () => {
       );
 
       // Mostrar confirmación
+      success('¡Mensaje enviado!', 'Te responderemos a la brevedad');
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({ name: '', email: '', message: '' });
       }, 3000);
 
-    } catch (error) {
-      console.error('Error al enviar email:', error);
-      alert('Error al enviar el mensaje. Por favor, intenta nuevamente o contacta por WhatsApp.');
+    } catch (err) {
+      console.error('Error al enviar email:', err);
+      error('Error al enviar', 'Por favor, intenta nuevamente o contacta por WhatsApp');
     }
   };
 

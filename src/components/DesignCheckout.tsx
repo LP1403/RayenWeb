@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Check, ShoppingBag } from 'lucide-react';
 import { CustomDesign } from '../types/Design';
-import { getBaseGarmentImage, applyColorFilter, getGarmentTemplate } from '../data/garmentImages';
-import { saveDesign, generateDesignId, captureCanvasAsImage } from '../services/designStorage';
+import { getGarmentTemplate } from '../data/garmentImages';
+import { saveDesign, generateDesignId } from '../services/designStorage';
+import { useToast } from '../hooks/useToast';
 
 interface DesignCheckoutProps {
     design: CustomDesign;
@@ -14,6 +16,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
     const containerRef = useRef<HTMLDivElement>(null);
     const garmentCanvasRef = useRef<HTMLCanvasElement>(null);
     const designCanvasRef = useRef<HTMLCanvasElement>(null);
+    const { success } = useToast();
 
     // Función para capturar el preview completo (mockup + diseño)
     const captureFullPreview = (): string => {
@@ -72,13 +75,13 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
             saveDesign(designToSave);
 
             // Mostrar confirmación
-            alert('¡Diseño guardado exitosamente!');
+            success('¡Diseño guardado!', 'Tu diseño se ha guardado exitosamente');
 
             // Continuar con el flujo normal
             onComplete();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error al guardar diseño:', error);
-            alert('Error al guardar el diseño. Inténtalo de nuevo.');
+            error('Error al guardar', 'No se pudo guardar el diseño. Inténtalo de nuevo.');
         }
     };
 
@@ -170,7 +173,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
             design.garmentColor === '#000000' ? 'negro' :
                 design.garmentColor === '#6B7280' ? 'gris' : 'blanco';
 
-        img.src = getGarmentTemplate(design.garmentType, colorName, false);
+        img.src = getGarmentTemplate(design.garmentType, colorName);
     }, [design.garmentType, design.garmentColor]);
 
     // Función para dibujar el canvas del diseño
@@ -260,6 +263,7 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
                 <h2 className="text-3xl font-light text-black mb-4">Revisa tu diseño</h2>
                 <p className="text-gray-600 font-light">Confirma todos los detalles antes de finalizar tu pedido</p>
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Preview Final con Canvas */}
@@ -382,6 +386,15 @@ const DesignCheckout: React.FC<DesignCheckoutProps> = ({ design, onBack, onCompl
                             <li>• Garantía de calidad en todos nuestros productos</li>
                             <li>• Posibilidad de cambios hasta 24hs después del pedido</li>
                         </ul>
+                    </div>
+
+                    {/* Disclaimer sutil */}
+                    <div className="mt-4">
+                        <div className="text-xs text-gray-500 space-y-1">
+                            <p>• Esta previsualización es meramente representativa e ilustrativa y puede diferir del producto final</p>
+                            <p>• El logo de Rayen se incluirá automáticamente en la prenda a menos que se especifique una ubicación particular</p>
+                            <p>• Los colores, texturas y proporciones pueden variar ligeramente en el producto físico</p>
+                        </div>
                     </div>
 
                     {/* Botones de acción */}

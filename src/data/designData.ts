@@ -5,63 +5,58 @@ export const garmentTypes: GarmentType[] = [
     {
         id: 'remera',
         name: 'Remera',
-        baseImage: getGarmentTemplate('remera', 'blanco', false),
+        baseImage: getGarmentTemplate('remera', 'blanco'),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     },
     {
         id: 'buzo',
         name: 'Buzo',
-        baseImage: getGarmentTemplate('buzo', 'blanco', false),
+        baseImage: getGarmentTemplate('buzo', 'blanco'),
         colors: ['#000000', '#FFFFFF', '#6B7280', '#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6']
     }
 ];
 
 export const designSizes: DesignSize[] = [
-    { id: 'small', name: 'Chico', scale: 0.6 },
-    { id: 'medium', name: 'Mediano', scale: 1.0 },
-    { id: 'large', name: 'Grande', scale: 1.6 }
+    { id: 'small', name: 'Chico', scale: 1.0 },
+    { id: 'medium', name: 'Mediano', scale: 1.8 },
+    { id: 'large', name: 'Grande', scale: 2.6 }
 ];
 
 export const designs: Design[] = [
     {
         id: 1,
-        name: 'Logo Minimalista',
-        image: `${import.meta.env.BASE_URL}designs/logo-minimalista.svg`,
-        category: 'logo',
-        customScale: 1.0 // Escala personalizada para logos
+        name: 'Ángel Rayen',
+        image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-18.png`,
+        category: 'graphic',
+        customScale: 1.2 // Escala personalizada para el ángel
     },
     {
         id: 2,
-        name: 'Geometría Abstracta',
-        image: `${import.meta.env.BASE_URL}designs/geometria-abstracta.svg`,
+        name: 'Gato Místico',
+        image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-19.png`,
         category: 'graphic',
-        customScale: 1.4 // Escala personalizada para gráficos
+        customScale: 1.1 // Escala personalizada para el gato místico
     },
     {
         id: 3,
-        name: 'Tipografía Bold',
-        image: `${import.meta.env.BASE_URL}designs/tipografia-bold.svg`,
-        category: 'text',
-        customScale: 1.4
+        name: 'Gato Psicodélico',
+        image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-20.png`,
+        category: 'graphic',
+        customScale: 1.3 // Escala personalizada para el gato psicodélico
     },
     {
         id: 4,
-        name: 'Patrón Vintage',
-        image: `${import.meta.env.BASE_URL}designs/patron-vintage.svg`,
+        name: 'Serpiente',
+        image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-21.png`,
         category: 'graphic',
-        customScale: 1.1 // Escala personalizada para patrones
+        customScale: 1.0 // Escala personalizada para la serpiente
     },
     {
         id: 5,
-        name: 'Líneas Modernas',
-        image: `${import.meta.env.BASE_URL}designs/lineas-modernas.svg`,
-        category: 'graphic'
-    },
-    {
-        id: 6,
-        name: 'Texto Inspiracional',
-        image: `${import.meta.env.BASE_URL}designs/texto-inspiracional.svg`,
-        category: 'text'
+        name: 'Diseño Adicional',
+        image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-22.png`,
+        category: 'graphic',
+        customScale: 1.0 // Escala personalizada para el diseño adicional
     }
 ];
 

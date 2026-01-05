@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, List } from 'lucide-react';
 import { Product } from '../types/Product';
+import { useActiveCategories } from '../hooks/useCategories';
 
 interface ProductCatalogProps {
   products: Product[];
@@ -10,23 +11,25 @@ interface ProductCatalogProps {
 const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onProductClick }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { categories, loading: categoriesLoading } = useActiveCategories();
 
-  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
+  // Crear lista de categorías dinámicas
+  const availableCategories = [
+    { slug: 'all', name: 'Todos', icon: '🛍️' },
+    ...categories.map(cat => ({
+      slug: cat.slug,
+      name: cat.name,
+      icon: cat.icon || '📦'
+    }))
+  ];
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
+  const filteredProducts = selectedCategory === 'all'
+    ? products
     : products.filter(p => p.category === selectedCategory);
 
-  const getCategoryName = (category: string) => {
-    const names: { [key: string]: string } = {
-      'all': 'Todos',
-      'remera': 'Remeras',
-      'buzo': 'Buzos',
-      'pantalon': 'Pantalones',
-      'short': 'Shorts',
-      'campera': 'Camperas'
-    };
-    return names[category] || category;
+  const getCategoryName = (categorySlug: string) => {
+    const category = availableCategories.find(cat => cat.slug === categorySlug);
+    return category ? category.name : categorySlug;
   };
 
   return (
@@ -43,36 +46,37 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onProductClic
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 space-y-6 sm:space-y-0">
           <div className="flex items-center">
             <div className="flex flex-wrap gap-4">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2 text-sm font-light tracking-wide transition-colors ${
-                    selectedCategory === category
+              {categoriesLoading ? (
+                <div className="text-gray-500">Cargando categorías...</div>
+              ) : (
+                availableCategories.map((category) => (
+                  <button
+                    key={category.slug}
+                    onClick={() => setSelectedCategory(category.slug)}
+                    className={`px-6 py-2 text-sm font-light tracking-wide transition-colors ${selectedCategory === category.slug
                       ? 'text-black border-b-2 border-black'
                       : 'text-gray-500 hover:text-black'
-                  }`}
-                >
-                  {getCategoryName(category)}
-                </button>
-              ))}
+                      }`}
+                  >
+                    {category.name}
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-3 transition-colors ${
-                viewMode === 'grid' ? 'text-black' : 'text-gray-400 hover:text-gray-600'
-              }`}
+              className={`p-3 transition-colors ${viewMode === 'grid' ? 'text-black' : 'text-gray-400 hover:text-gray-600'
+                }`}
             >
               <Grid className="h-5 w-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-3 transition-colors ${
-                viewMode === 'list' ? 'text-black' : 'text-gray-400 hover:text-gray-600'
-              }`}
+              className={`p-3 transition-colors ${viewMode === 'list' ? 'text-black' : 'text-gray-400 hover:text-gray-600'
+                }`}
             >
               <List className="h-5 w-5" />
             </button>
@@ -80,51 +84,50 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onProductClic
         </div>
 
         {/* Products Grid */}
-        <div className={`grid gap-8 ${
-          viewMode === 'grid' 
-            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
-            : 'grid-cols-1'
-        }`}>
+        <div className={`grid gap-8 ${viewMode === 'grid'
+          ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+          : 'grid-cols-1'
+          }`}>
           {filteredProducts.map((product) => (
             <div
               key={product.id}
               onClick={() => onProductClick(product)}
-              className={`group cursor-pointer bg-white overflow-hidden transition-all duration-300 ${
-                viewMode === 'list' ? 'flex' : ''
-              }`}
+              className={`group cursor-pointer bg-white overflow-hidden transition-all duration-300 ${viewMode === 'list' ? 'flex' : ''
+                }`}
             >
-              <div className={`relative overflow-hidden ${
-                viewMode === 'list' ? 'w-48 flex-shrink-0' : 'aspect-[3/4]'
-              }`}>
+              <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 flex-shrink-0' : 'aspect-[3/4]'
+                }`}>
                 <img
                   src={product.images[0]}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              
+
               <div className={`py-6 ${viewMode === 'list' ? 'flex-1 px-6' : 'text-center'}`}>
                 <h3 className="text-lg font-light text-black mb-2 group-hover:text-gray-600 transition-colors">
                   {product.name}
                 </h3>
-                
+
                 <p className="text-lg font-light text-black mb-4">
                   ${product.price.toLocaleString()}
                 </p>
-                
+
                 <div className={`flex ${viewMode === 'list' ? 'justify-start' : 'justify-center'} items-center space-x-2 mb-4`}>
                   {product.colors.slice(0, 3).map((color, index) => (
-                    <div key={index} className="w-4 h-4 rounded-full border border-gray-300" 
-                         style={{ backgroundColor: color.toLowerCase() === 'negro' ? '#000' : 
-                                                  color.toLowerCase() === 'blanco' ? '#fff' : 
-                                                  color.toLowerCase() === 'gris' ? '#6b7280' : '#d1d5db' }}>
+                    <div key={index} className="w-4 h-4 rounded-full border border-gray-300"
+                      style={{
+                        backgroundColor: color.toLowerCase() === 'negro' ? '#000' :
+                          color.toLowerCase() === 'blanco' ? '#fff' :
+                            color.toLowerCase() === 'gris' ? '#6b7280' : '#d1d5db'
+                      }}>
                     </div>
                   ))}
                   {product.colors.length > 3 && (
                     <span className="text-xs text-gray-500">+{product.colors.length - 3}</span>
                   )}
                 </div>
-                
+
                 <div className={`flex ${viewMode === 'list' ? 'justify-start' : 'justify-center'} items-center space-x-1 mb-4`}>
                   {product.sizes.slice(0, 4).map((size, index) => (
                     <span key={index} className="text-xs text-gray-500 border border-gray-200 px-2 py-1">
@@ -135,13 +138,13 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onProductClic
                     <span className="text-xs text-gray-500">+{product.sizes.length - 4}</span>
                   )}
                 </div>
-                
+
                 {viewMode === 'list' && (
                   <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                     {product.description}
                   </p>
                 )}
-                
+
                 <button className="text-sm text-black hover:text-gray-600 transition-colors font-light tracking-wide">
                   VER DETALLES
                 </button>

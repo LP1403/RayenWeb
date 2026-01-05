@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Eye, RotateCcw } from 'lucide-react';
+import { Trash2, Eye } from 'lucide-react';
 import { CustomDesign } from '../types/Design';
-import { getSavedDesigns, deleteDesign, recreateDesign } from '../services/designStorage';
-
+import { getSavedDesigns, deleteDesign } from '../services/designStorage';
+import { useToast } from '../hooks/useToast';
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 const formatPrice = (price: number) => {
     if (price === 0 || price === null || price === undefined) {
         return 'A confirmar';
@@ -11,11 +12,12 @@ const formatPrice = (price: number) => {
 };
 
 interface SavedDesignsProps {
-    onLoadDesign: (design: any) => void;
+    onLoadDesign: (design: CustomDesign) => void;
 }
 
 const SavedDesigns: React.FC<SavedDesignsProps> = ({ onLoadDesign }) => {
     const [savedDesigns, setSavedDesigns] = useState<CustomDesign[]>([]);
+    const { success, error } = useToast();
 
     useEffect(() => {
         loadSavedDesigns();
@@ -28,14 +30,18 @@ const SavedDesigns: React.FC<SavedDesignsProps> = ({ onLoadDesign }) => {
 
     const handleDeleteDesign = (designId: string) => {
         if (window.confirm('¿Estás seguro de que quieres eliminar este diseño?')) {
-            deleteDesign(designId);
-            loadSavedDesigns();
+            try {
+                deleteDesign(designId);
+                loadSavedDesigns();
+                success('Diseño eliminado', 'El diseño se ha eliminado correctamente');
+            } catch (err: any) {
+                error('Error al eliminar', 'No se pudo eliminar el diseño');
+            }
         }
     };
 
     const handleLoadDesign = (design: CustomDesign) => {
-        const recreatedDesign = recreateDesign(design);
-        onLoadDesign(recreatedDesign);
+        onLoadDesign(design);
     };
 
     const formatDate = (date: Date) => {

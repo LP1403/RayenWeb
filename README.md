@@ -1,111 +1,69 @@
-# Rayen - E-commerce de Ropa
+# 🚀 Rayen Web
 
-Una plataforma de e-commerce moderna para la marca Rayen, desarrollada con React, TypeScript y Vite.
+## 📋 **Comandos Principales**
 
-## 🚀 Características
-
-- **Catálogo de productos** con vista detallada
-- **Diseñador personalizado** con wizard interactivo
-- **Mockups realistas** para visualizar diseños
-- **Responsive design** optimizado para móviles
-- **Navegación fluida** entre secciones
-
-## 🛠️ Tecnologías
-
-- **React 18** + **TypeScript**
-- **Vite** para desarrollo y build
-- **Tailwind CSS** para estilos
-- **Lucide React** para iconos
-- **Canvas API** para el diseñador interactivo
-
-## 📦 Instalación
-
-1. **Clona el repositorio:**
-   ```bash
-   git clone https://github.com/tu-usuario/RayenWeb.git
-   cd RayenWeb
-   ```
-
-2. **Instala las dependencias:**
-   ```bash
-   npm install
-   ```
-
-## 🚀 Desarrollo
-
-**Ejecutar en modo desarrollo:**
+### **Desarrollo:**
 ```bash
-npm run dev
+npm run dev          # Servidor de desarrollo
+npm run build        # Build para producción
+npm run preview      # Preview del build
 ```
 
-La aplicación estará disponible en `http://localhost:5173`
-
-## 🏗️ Build para Producción
-
-**Generar build de producción:**
+### **Base de Datos:**
 ```bash
-npm run build
+npm run migrate:products      # Migrar productos a Firebase
+npm run add:product-numbers   # Agregar números a productos
+npm run verify:setup          # Verificar configuración
 ```
 
-Los archivos se generarán en la carpeta `dist/`
-
-**Preview del build:**
+### **Deploy:**
 ```bash
-npm run preview
+npm run deploy             # Deploy completo a Firebase
+npm run deploy:preview     # Deploy de preview
+npm run deploy:rules       # Deploy solo de reglas de seguridad
 ```
 
-## 📁 Estructura del Proyecto
+## 🔥 **Firebase Configurado**
+
+- **Proyecto:** `rayenweb-b321c`
+- **Base de datos:** Firestore
+- **Hosting:** Configurado para la aplicación web
+- **Autenticación:** Preparada para admin
+
+## 📁 **Estructura**
 
 ```
-src/
-├── components/          # Componentes React
-│   ├── Header.tsx      # Navegación principal
-│   ├── Hero.tsx        # Sección hero
-│   ├── DesignWizard.tsx # Wizard de diseño
-│   └── DesignPreview.tsx # Preview interactivo
-├── data/               # Datos estáticos
-│   ├── products.ts     # Catálogo de productos
-│   └── designData.ts   # Diseños y configuraciones
-├── types/              # Definiciones TypeScript
-└── App.tsx            # Componente principal
+src/                    # Código fuente
+├── components/         # Componentes React
+├── pages/             # Páginas de la aplicación
+├── config/            # Configuración (Firebase, EmailJS)
+├── types/             # Tipos TypeScript
+├── services/          # Servicios (Firebase, Storage)
+├── hooks/             # Hooks personalizados
+├── data/              # Datos estáticos
+└── auth/              # Autenticación
 ```
 
-## 🎨 Diseñador Personalizado
+## 🎯 **Funcionalidades**
 
-El proyecto incluye un wizard completo para personalizar prendas:
+- ✅ **Catálogo de productos** con Firebase
+- ✅ **Diseñador personalizado** de prendas
+- ✅ **Panel de administración** para productos
+- ✅ **Sistema de pedidos** completo con gestión de costos
+- ✅ **Notificaciones en tiempo real** de pedidos activos
+- ✅ **Autenticación** con Firebase Auth
+- ✅ **Formulario de contacto** con EmailJS
+- ✅ **Responsive design** con Tailwind CSS
 
-1. **Selección de prenda** (remera, buzo)
-2. **Elección de diseño** de la biblioteca
-3. **Preview interactivo** con drag & drop
-4. **Personalización** de tamaño, posición y rotación
-5. **Checkout** con resumen final
+## 📦 **Sistema de Pedidos**
 
-## 🌐 Despliegue
+El sistema permite a los clientes hacer pedidos desde la web y al administrador gestionarlos:
 
-El proyecto está configurado para GitHub Pages con base path `/RayenWeb/`:
+- **Clientes**: Pueden hacer pedidos con/sin datos de envío
+- **Administrador**: Gestiona pedidos, estados, costos y ve ganancias
+- **Notificaciones**: Badge en tiempo real de pedidos activos
+- **Números únicos**: Cada producto y pedido tiene un identificador
 
-- **Desarrollo**: Assets desde `/`
-- **Producción**: Assets desde `/RayenWeb/`
+Ver documentación completa en [ORDERS_SYSTEM.md](./ORDERS_SYSTEM.md)
 
-## 📝 Scripts Disponibles
-
-- `npm run dev` - Servidor de desarrollo
-- `npm run build` - Build de producción
-- `npm run preview` - Preview del build
-- `npm run lint` - Linter de código
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
-
----
-
-**Desarrollado con ❤️ para Rayen**
+¡Listo para usar! 🔥

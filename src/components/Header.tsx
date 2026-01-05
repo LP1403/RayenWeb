@@ -1,11 +1,12 @@
-import React from 'react';
-import { Menu } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isHome
@@ -90,12 +91,92 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="flex items-center">
-            <button className="lg:hidden p-2">
-              <Menu className={`h-6 w-6 ${isHome ? 'text-white' : 'text-black'}`} />
+            <button
+              className="lg:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className={`h-6 w-6 ${isHome ? 'text-white' : 'text-black'}`} />
+              ) : (
+                <Menu className={`h-6 w-6 ${isHome ? 'text-white' : 'text-black'}`} />
+              )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden">
+          <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
+          <div className={`fixed top-20 left-0 right-0 z-50 ${isHome ? 'bg-white/95 backdrop-blur-md' : 'bg-white'} border-b border-gray-200 shadow-lg`}>
+            <nav className="px-4 py-6 space-y-4">
+              <button
+                onClick={() => {
+                  navigate('/');
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left text-sm font-light tracking-wide transition-colors py-2 ${location.pathname === '/'
+                    ? isHome
+                      ? 'text-black border-b-2 border-black pb-1'
+                      : 'text-black border-b-2 border-black pb-1'
+                    : 'text-gray-500 hover:text-black'
+                  }`}
+              >
+                HOME
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/catalog');
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left text-sm font-light tracking-wide transition-colors py-2 ${location.pathname === '/catalog'
+                    ? 'text-black border-b-2 border-black pb-1'
+                    : 'text-gray-500 hover:text-black'
+                  }`}
+              >
+                SHOP
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/design');
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left text-sm font-light tracking-wide transition-colors py-2 ${location.pathname === '/design'
+                    ? 'text-black border-b-2 border-black pb-1'
+                    : 'text-gray-500 hover:text-black'
+                  }`}
+              >
+                DISEÑA
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/saved-designs');
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left text-sm font-light tracking-wide transition-colors py-2 ${location.pathname === '/saved-designs'
+                    ? 'text-black border-b-2 border-black pb-1'
+                    : 'text-gray-500 hover:text-black'
+                  }`}
+              >
+                MIS DISEÑOS
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/contact');
+                  setMobileMenuOpen(false);
+                }}
+                className={`block w-full text-left text-sm font-light tracking-wide transition-colors py-2 ${location.pathname === '/contact'
+                    ? 'text-black border-b-2 border-black pb-1'
+                    : 'text-gray-500 hover:text-black'
+                  }`}
+              >
+                CONTACTO
+              </button>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

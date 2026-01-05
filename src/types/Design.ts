@@ -4,6 +4,8 @@ export interface Design {
     image: string;
     category: 'graphic' | 'text' | 'logo';
     customScale?: number; // Escala personalizada (opcional, por defecto 1.0)
+    isCustom?: boolean; // Indica si es un diseño personalizado subido por el usuario
+    originalFile?: File; // Archivo original subido por el usuario
 }
 
 export interface GarmentType {

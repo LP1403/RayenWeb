@@ -2,6 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Estilos globales consistentes para toda la aplicación - TEMA DARK */
+@layer components {
+  /* Inputs consistentes - Dark Theme */
+  .input-primary {
+    @apply w-full px-4 py-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400;
+  }
+  
+  /* Botones primarios - Dark Theme */
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium;
+  }
+  
+  /* Botones secundarios - Dark Theme */
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors font-medium;
+  }
+  
+  /* Botones de acción - Dark Theme */
+  .btn-action {
+    @apply p-2 rounded-lg hover:bg-gray-700 transition-colors;
+  }
+  
+  /* Cards consistentes - Dark Theme */
+  .card {
+    @apply bg-gray-800 rounded-xl shadow-sm border border-gray-700;
+  }
+  
+  /* Focus states consistentes */
+  .focus-primary {
+    @apply focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+  
+  /* Tema dark global */
+  .dark-theme {
+    @apply bg-gray-900 text-white;
+  }
+  
+  /* Textos en tema dark */
+  .text-dark {
+    @apply text-white;
+  }
+  
+  .text-dark-secondary {
+    @apply text-gray-300;
+  }
+  
+  .text-dark-muted {
+    @apply text-gray-400;
+  }
+}
+
 /* Estilos específicos para el sistema de canvas como Kittl */
 @keyframes MQRBn {
   0% {
