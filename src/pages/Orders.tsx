@@ -25,7 +25,9 @@ const Orders: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<OrderStatus | 'all'>('all');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditCostsModal, setShowEditCostsModal] = useState(false);
+  const [showEditCustomerModal, setShowEditCustomerModal] = useState(false);
   const [editingCosts, setEditingCosts] = useState({ shipping: 0, labor: 0 });
+  const [editingCustomerInfo, setEditingCustomerInfo] = useState<CustomerInfo>({});
 
   useEffect(() => {
     // Suscribirse a cambios en tiempo real
@@ -87,6 +89,27 @@ const Orders: React.FC = () => {
       labor: order.costs.laborCost
     });
     setShowEditCostsModal(true);
+  };
+
+  const openEditCustomerModal = (order: Order) => {
+    setSelectedOrder(order);
+    setEditingCustomerInfo(order.customerInfo || {});
+    setShowEditCustomerModal(true);
+  };
+
+  const handleUpdateCustomerInfo = async () => {
+    if (!selectedOrder) return;
+
+    try {
+      await OrderService.updateOrder(selectedOrder.id, {
+        customerInfo: editingCustomerInfo
+      });
+      setShowEditCustomerModal(false);
+      setSelectedOrder(null);
+    } catch (error) {
+      console.error('Error updating customer info:', error);
+      alert('Error al actualizar la información del cliente');
+    }
   };
 
   const getStatusIcon = (status: OrderStatus) => {
@@ -348,6 +371,10 @@ const Orders: React.FC = () => {
             setShowDetailsModal(false);
             setSelectedOrder(null);
           }}
+          onEditCustomer={() => {
+            setShowDetailsModal(false);
+            openEditCustomerModal(selectedOrder);
+          }}
         />
       )}
 
@@ -360,6 +387,19 @@ const Orders: React.FC = () => {
           onSave={(productCost, dtfCost) => handleUpdateCosts(productCost, dtfCost)}
           onClose={() => {
             setShowEditCostsModal(false);
+            setSelectedOrder(null);
+          }}
+        />
+      )}
+
+      {/* Edit Customer Info Modal */}
+      {showEditCustomerModal && selectedOrder && (
+        <EditCustomerInfoModal
+          customerInfo={editingCustomerInfo}
+          onCustomerInfoChange={setEditingCustomerInfo}
+          onSave={handleUpdateCustomerInfo}
+          onClose={() => {
+            setShowEditCustomerModal(false);
             setSelectedOrder(null);
           }}
         />
@@ -411,7 +451,8 @@ const FilterButton: React.FC<{
 const OrderDetailsModal: React.FC<{
   order: Order;
   onClose: () => void;
-}> = ({ order, onClose }) => (
+  onEditCustomer: () => void;
+}> = ({ order, onClose, onEditCustomer }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
     <div className="bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <div className="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between">
@@ -429,10 +470,19 @@ const OrderDetailsModal: React.FC<{
       <div className="p-6 space-y-6">
         {/* Customer Info */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-            <User className="w-5 h-5 mr-2" />
-            Información del Cliente
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white flex items-center">
+              <User className="w-5 h-5 mr-2" />
+              Información del Cliente
+            </h3>
+            <button
+              onClick={onEditCustomer}
+              className="text-blue-400 hover:text-blue-300 transition-colors flex items-center space-x-1 text-sm"
+            >
+              <Edit className="w-4 h-4" />
+              <span>Editar</span>
+            </button>
+          </div>
           <div className="bg-gray-700 rounded-lg p-4 space-y-2">
             {order.customerInfo.name ? (
               <>
@@ -657,6 +707,152 @@ const EditCostsModal: React.FC<{
             </button>
             <button
               onClick={() => onSave(productCost, dtfCost)}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Edit Customer Info Modal
+const EditCustomerInfoModal: React.FC<{
+  customerInfo: CustomerInfo;
+  onCustomerInfoChange: (info: CustomerInfo) => void;
+  onSave: () => void;
+  onClose: () => void;
+}> = ({ customerInfo, onCustomerInfoChange, onSave, onClose }) => {
+  const handleChange = (field: keyof CustomerInfo, value: string) => {
+    onCustomerInfoChange({ ...customerInfo, [field]: value });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="border-b border-gray-700 px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-white">
+            Editar Información del Cliente
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <XCircle className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              <User className="w-4 h-4 inline mr-1" />
+              Nombre Completo
+            </label>
+            <input
+              type="text"
+              value={customerInfo.name || ''}
+              onChange={(e) => handleChange('name', e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Nombre del cliente"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Phone className="w-4 h-4 inline mr-1" />
+                Teléfono
+              </label>
+              <input
+                type="tel"
+                value={customerInfo.phone || ''}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="+54 9 11 1234-5678"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Mail className="w-4 h-4 inline mr-1" />
+                Email
+              </label>
+              <input
+                type="email"
+                value={customerInfo.email || ''}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="cliente@email.com"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              <MapPin className="w-4 h-4 inline mr-1" />
+              Dirección
+            </label>
+            <input
+              type="text"
+              value={customerInfo.address || ''}
+              onChange={(e) => handleChange('address', e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Calle y número"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Ciudad
+              </label>
+              <input
+                type="text"
+                value={customerInfo.city || ''}
+                onChange={(e) => handleChange('city', e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ciudad"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Código Postal
+              </label>
+              <input
+                type="text"
+                value={customerInfo.postalCode || ''}
+                onChange={(e) => handleChange('postalCode', e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="1234"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Notas
+            </label>
+            <textarea
+              value={customerInfo.notes || ''}
+              onChange={(e) => handleChange('notes', e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Notas adicionales sobre la entrega o el pedido..."
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={onClose}
+              className="flex-1 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onSave}
               className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Guardar
