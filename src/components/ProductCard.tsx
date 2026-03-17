@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode, onClick }) => {
-    const imageUrl = useImageUrl(product.images[0]);
+    const imageUrl = useImageUrl(product.images[product.catalogImageIndex ?? 0]);
 
     return (
         <div

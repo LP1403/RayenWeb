@@ -76,7 +76,7 @@ const Carousel: React.FC<CarouselProps> = ({ products, onProductClick }) => {
                   <div className="relative group cursor-pointer" onClick={() => onProductClick(product)}>
                     <div className="aspect-[4/5] bg-gray-100 overflow-hidden">
                       <img
-                        src={product.carouselImages && product.carouselImages.length > 0 ? product.carouselImages[0] : product.images[0]}
+                        src={product.carouselImages && product.carouselImages.length > 0 ? product.carouselImages[0] : product.images[product.catalogImageIndex ?? 0]}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />

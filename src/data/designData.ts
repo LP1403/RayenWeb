@@ -25,38 +25,38 @@ export const designSizes: DesignSize[] = [
 export const designs: Design[] = [
     {
         id: 1,
-        name: 'Ángel Rayen',
+        name: 'Gato Psicodélico',
         image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-18.png`,
         category: 'graphic',
-        customScale: 1.2 // Escala personalizada para el ángel
+        customScale: 1.2
     },
     {
         id: 2,
-        name: 'Gato Místico',
+        name: ' Ángel Rayen',
         image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-19.png`,
         category: 'graphic',
-        customScale: 1.1 // Escala personalizada para el gato místico
+        customScale: 1.1
     },
     {
         id: 3,
-        name: 'Gato Psicodélico',
+        name: 'Serpiente Mística',
         image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-20.png`,
         category: 'graphic',
-        customScale: 1.3 // Escala personalizada para el gato psicodélico
+        customScale: 1.3
     },
     {
         id: 4,
-        name: 'Serpiente',
+        name: 'Gato Fachero',
         image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-21.png`,
         category: 'graphic',
-        customScale: 1.0 // Escala personalizada para la serpiente
+        customScale: 1.0
     },
     {
         id: 5,
-        name: 'Diseño Adicional',
+        name: 'Gato Místico',
         image: `${import.meta.env.BASE_URL}designs/MOCKUPS KITTL-22.png`,
         category: 'graphic',
-        customScale: 1.0 // Escala personalizada para el diseño adicional
+        customScale: 1.0
     }
 ];
 

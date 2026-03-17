@@ -98,7 +98,7 @@ const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onProductClic
               <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-48 flex-shrink-0' : 'aspect-[3/4]'
                 }`}>
                 <img
-                  src={product.images[0]}
+                  src={product.images[product.catalogImageIndex ?? 0]}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

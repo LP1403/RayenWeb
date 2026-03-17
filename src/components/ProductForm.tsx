@@ -20,6 +20,7 @@ const ProductForm = ({ product, onSubmit, onClose }: ProductFormProps) => {
         cost: 0,
         description: '',
         images: [],
+        catalogImageIndex: 0,
         sizes: ['S', 'M', 'L', 'XL'],
         colors: ['#FFFFFF', '#000000'],
         stock: 0
@@ -46,6 +47,7 @@ const ProductForm = ({ product, onSubmit, onClose }: ProductFormProps) => {
                 cost: product.cost || 0,
                 description: product.description,
                 images: product.images,
+                catalogImageIndex: product.catalogImageIndex ?? 0,
                 sizes: product.sizes,
                 colors: product.colors,
                 stock: product.stock,
@@ -381,6 +383,51 @@ const ProductForm = ({ product, onSubmit, onClose }: ProductFormProps) => {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Selección de Imagen para Catálogo */}
+                        {formData.images && formData.images.length > 0 && (
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Imagen para el Catálogo
+                                </label>
+                                <p className="text-xs text-gray-600 mb-3">
+                                    Selecciona qué imagen se mostrará en el catálogo de productos. Click en la imagen que quieras usar.
+                                </p>
+                                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                    {formData.images.map((imagePath, index) => (
+                                        <div 
+                                            key={index} 
+                                            className="relative group cursor-pointer"
+                                            onClick={() => setFormData(prev => ({ ...prev, catalogImageIndex: index }))}
+                                        >
+                                            <img
+                                                src={imagePath.startsWith('http') ? imagePath : `/${imagePath}`}
+                                                alt={`Imagen ${index + 1}`}
+                                                className={`w-full h-24 object-cover rounded-lg border-2 transition-all shadow-sm ${
+                                                    (formData.catalogImageIndex ?? 0) === index 
+                                                        ? 'border-green-500 ring-4 ring-green-200 scale-105' 
+                                                        : 'border-gray-300 hover:border-blue-400 hover:shadow-md'
+                                                }`}
+                                                onError={(e) => {
+                                                    console.log('Error loading image:', imagePath);
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                            {(formData.catalogImageIndex ?? 0) === index && (
+                                                <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg z-10">
+                                                    ✓ Catálogo
+                                                </div>
+                                            )}
+                                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity rounded-lg flex items-center justify-center">
+                                                <span className="text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity font-medium text-center px-2">
+                                                    {(formData.catalogImageIndex ?? 0) === index ? 'Imagen actual del catálogo' : 'Click para usar'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Imágenes por Color */}
                         <div>

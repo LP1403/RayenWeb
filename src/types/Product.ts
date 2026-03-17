@@ -7,6 +7,7 @@ export interface Product {
     cost: number; // Costo del producto (interno)
     description: string;
     images: string[];
+    catalogImageIndex?: number; // Índice de la imagen a usar en el catálogo (default: 0)
     sizes: string[];
     colors: string[];
     stock: number;
@@ -29,6 +30,7 @@ export interface CreateProductData {
     cost: number; // Costo del producto
     description: string;
     images: string[];
+    catalogImageIndex?: number; // Índice de la imagen a usar en el catálogo
     sizes: string[];
     colors: string[];
     stock: number;

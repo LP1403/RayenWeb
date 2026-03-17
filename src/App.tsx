@@ -7,11 +7,10 @@ import ProductCatalog from './components/ProductCatalog';
 import ProductDetail from './components/ProductDetail';
 import DesignWizard from './components/DesignWizard';
 import SavedDesigns from './components/SavedDesigns';
-import ToastContainer from './components/ToastContainer';
-import { useToast } from './hooks/useToast';
 import { useActiveProducts } from './hooks/useProducts';
 import { useAdminAuth } from './hooks/useAdminAuth';
 import AdminFloatingButton from './components/AdminFloatingButton';
+import { ToastProvider } from './context/ToastContext';
 
 // Admin imports
 import { useAuth } from './hooks/useAuth';
@@ -24,18 +23,17 @@ import SetupWizard from './pages/SetupWizard';
 import Layout from './components/Layout';
 
 function App() {
-  const { toasts, removeToast } = useToast();
-
   return (
     <Router>
-      <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin/*" element={<AdminApp />} />
+      <ToastProvider>
+        <Routes>
+          {/* Admin Routes */}
+          <Route path="/admin/*" element={<AdminApp />} />
 
-        {/* Public Routes */}
-        <Route path="/*" element={<PublicApp />} />
-      </Routes>
-      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
+          {/* Public Routes */}
+          <Route path="/*" element={<PublicApp />} />
+        </Routes>
+      </ToastProvider>
     </Router>
   );
 }

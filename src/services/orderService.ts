@@ -67,8 +67,9 @@ export class OrderService {
       const now = new Date();
       const orderNumber = await this.getNextOrderNumber();
 
-      // Obtener el costo de DTF de la configuración global
+      // Obtener costos globales de configuración
       const dtfCost = await ConfigService.getDtfCost();
+      const shippingCostFromConfig = await ConfigService.getShippingCost();
 
       // Calcular totalPrice para cada item (precio de venta * cantidad)
       const itemsWithTotal = orderData.items.map(item => ({
@@ -81,18 +82,21 @@ export class OrderService {
         return sum + (item.unitCost * item.quantity);
       }, 0);
 
-      // Calcular el precio de venta total
-      const sellingPrice = itemsWithTotal.reduce((sum, item) => {
+      // Calcular el precio de venta total (productos)
+      const productSellingPrice = itemsWithTotal.reduce((sum, item) => {
         return sum + item.totalPrice;
       }, 0);
 
-      // Calcular costos iniciales (sin mano de obra ni envío aún)
+      // El precio de venta total incluye el envío que le cobramos al cliente
+      const sellingPrice = productSellingPrice + shippingCostFromConfig;
+
+      // Calcular costos iniciales (con envío desde config, sin mano de obra aún)
       const costs = this.calculateOrderCosts(
         productCost,
         sellingPrice,
         dtfCost,
         0, // laborCost inicial
-        0  // shippingCost inicial
+        shippingCostFromConfig  // shippingCost desde configuración global
       );
 
       const docRef = await addDoc(ordersRef, {

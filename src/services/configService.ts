@@ -16,6 +16,7 @@ export class ConfigService {
         const data = configSnap.data();
         return {
           dtfCost: data.dtfCost || 0,
+          shippingCost: data.shippingCost || 0,
           updatedAt: data.updatedAt?.toDate() || new Date(),
         };
       }
@@ -23,11 +24,13 @@ export class ConfigService {
       // Si no existe, crear con valores por defecto
       const defaultConfig: GlobalConfig = {
         dtfCost: 0,
+        shippingCost: 0,
         updatedAt: new Date(),
       };
 
       await setDoc(configRef, {
         dtfCost: defaultConfig.dtfCost,
+        shippingCost: defaultConfig.shippingCost,
         updatedAt: defaultConfig.updatedAt,
       });
 
@@ -37,6 +40,7 @@ export class ConfigService {
       // Retornar config por defecto en caso de error
       return {
         dtfCost: 0,
+        shippingCost: 0,
         updatedAt: new Date(),
       };
     }
@@ -65,6 +69,17 @@ export class ConfigService {
   // Actualizar solo el costo de DTF
   static async updateDtfCost(dtfCost: number): Promise<void> {
     await this.updateGlobalConfig({ dtfCost });
+  }
+
+  // Obtener solo el costo de envío
+  static async getShippingCost(): Promise<number> {
+    const config = await this.getGlobalConfig();
+    return config.shippingCost;
+  }
+
+  // Actualizar solo el costo de envío
+  static async updateShippingCost(shippingCost: number): Promise<void> {
+    await this.updateGlobalConfig({ shippingCost });
   }
 }
 

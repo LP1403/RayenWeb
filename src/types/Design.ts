@@ -41,8 +41,10 @@ export interface CustomDesign {
     designSize: string;
     designPosition: { x: number; y: number };
     designRotation: number;
+    designScale: number;
+    designFlipped: boolean;
     price: number;
     createdAt: Date;
-    previewImage?: string; // Imagen del preview generada
-    showBack?: boolean; // Si se estaba mostrando el dorso
+    previewImage?: string;
+    showBack?: boolean;
 }

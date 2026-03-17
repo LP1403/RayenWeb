@@ -17,8 +17,10 @@ import { OrderService } from '../services/orderService';
 import { ConfigService } from '../services/configService';
 import { ProductService } from '../services/productService';
 import { Order, OrderStatus, CustomerInfo } from '../types/order';
+import { useToastContext } from '../context/ToastContext';
 
 const Orders: React.FC = () => {
+  const toast = useToastContext();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -46,20 +48,22 @@ const Orders: React.FC = () => {
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     try {
       await OrderService.updateOrder(orderId, { status: newStatus });
+      toast.success('Estado actualizado', 'El estado del pedido se actualizó correctamente');
     } catch (error) {
       console.error('Error updating order status:', error);
-      alert('Error al actualizar el estado del pedido');
+      toast.error('Error', 'No se pudo actualizar el estado del pedido');
     }
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar este pedido?')) return;
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este pedido?')) return;
     
     try {
       await OrderService.deleteOrder(orderId);
+      toast.success('Pedido eliminado', 'El pedido se eliminó correctamente');
     } catch (error) {
       console.error('Error deleting order:', error);
-      alert('Error al eliminar el pedido');
+      toast.error('Error', 'No se pudo eliminar el pedido');
     }
   };
 
@@ -76,9 +80,10 @@ const Orders: React.FC = () => {
       );
       setShowEditCostsModal(false);
       setSelectedOrder(null);
+      toast.success('Costos actualizados', 'Los costos del pedido se actualizaron correctamente');
     } catch (error) {
       console.error('Error updating costs:', error);
-      alert('Error al actualizar los costos');
+      toast.error('Error', 'No se pudieron actualizar los costos');
     }
   };
 
@@ -106,9 +111,10 @@ const Orders: React.FC = () => {
       });
       setShowEditCustomerModal(false);
       setSelectedOrder(null);
+      toast.success('Información actualizada', 'Los datos del cliente se actualizaron correctamente');
     } catch (error) {
       console.error('Error updating customer info:', error);
-      alert('Error al actualizar la información del cliente');
+      toast.error('Error', 'No se pudo actualizar la información del cliente');
     }
   };
 

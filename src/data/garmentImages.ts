@@ -1,99 +1,88 @@
-// Sistema dinámico de templates - Usa imágenes reales del proyecto
 export const garmentTemplates = {
     remera: {
         front: {
             blanco: '/MockBlanco.jpg',
             negro: '/MockNegro.jpg',
         },
-        /*back: {
+        back: {
             blanco: '/Mock remera gato color- blanco.jpg',
             negro: '/Mock remera gato color-Negro.jpg',
-            gris: '/Mock remera gato color- verde osc.jpg'
-        }*/
+            gris: '/Mock remera gato color- verde osc.jpg',
+        },
     },
     buzo: {
         front: {
             blanco: '/Mock buzo gato lentes-Beige frente.jpg',
             negro: '/Mock up buzo gato negro-frente Negro.jpg',
         },
-        /*back: {
+        back: {
             blanco: '/Mock buzo gato lentes-Beige.jpg',
             negro: '/Mock up buzo gato negro-Espalda Negro.jpg',
-            gris: '/Mock buzo gato lentes-Marron osc.jpg'
-        }*/
-    }
+            gris: '/Mock buzo gato lentes-Marron osc.jpg',
+        },
+    },
 };
 
-// Imágenes base de las prendas (usando URLs de Unsplash para mockups blancos) - MANTENER COMPATIBILIDAD
 export const baseGarmentImages = {
     remera: {
         front: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
-        back: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80'
+        back: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
     },
     buzo: {
         front: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
-        back: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80'
-    }
+        back: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop&crop=center&auto=format&q=80',
+    },
 };
 
-// Función para obtener template por color
-export const getGarmentTemplate = (garmentId: string, color: string) => {
+export const getGarmentTemplate = (
+    garmentId: string,
+    color: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _side: 'front' | 'back' = 'front',
+): string => {
     const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
-    if (templates) {
-        // Solo usar front por ahora, ya que back está comentado
-        const side = 'front';
-        const colorKey = color.toLowerCase() as keyof typeof templates['front'];
-        return templates[side][colorKey] || templates[side]['blanco'];
+    if (!templates) {
+        return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
     }
-    // Fallback image if not found
-    return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
+
+    // Always use the front blank mockup — back-view files are product photos with
+    // a cat design already printed, not blank templates.
+    const sideTemplates = templates.front;
+    const colorKey = color.toLowerCase() as keyof typeof sideTemplates;
+    return sideTemplates[colorKey] ?? sideTemplates['blanco'] ?? '';
 };
 
-// Función para detectar automáticamente si hay imágenes de dorso
-export const hasBackView = (): boolean => {
-    // Por ahora no hay imágenes de dorso disponibles
-    return false;
+export const hasBackView = (garmentId?: string): boolean => {
+    if (!garmentId) return false;
+    const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
+    return !!templates?.back;
 };
 
-// Función para obtener todas las imágenes disponibles de una prenda
-export const getAvailableGarmentImages = (garmentId: string) => {
+export const getAvailableGarmentImages = (garmentId: string): string[] => {
     const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
     if (!templates) return [];
-
     return Object.keys(templates.front);
 };
 
-// Función para verificar si una imagen existe
-export const checkImageExists = (url: string): Promise<boolean> => {
-    return new Promise((resolve) => {
+export const checkImageExists = (url: string): Promise<boolean> =>
+    new Promise((resolve) => {
         const img = new Image();
         img.onload = () => resolve(true);
         img.onerror = () => resolve(false);
         img.src = url;
     });
-};
 
-// Función para obtener la mejor imagen disponible
-export const getBestGarmentImage = async (garmentId: string, color: string) => {
+export const getBestGarmentImage = async (garmentId: string, color: string): Promise<string> => {
     const templates = garmentTemplates[garmentId as keyof typeof garmentTemplates];
     if (!templates) return getGarmentTemplate(garmentId, color);
 
-    const side = 'front';
     const colorKey = color.toLowerCase() as keyof typeof templates['front'];
-    const preferredImage = templates[side][colorKey];
+    const preferredImage = templates.front[colorKey];
 
-    if (preferredImage) {
-        const exists = await checkImageExists(preferredImage);
-        if (exists) return preferredImage;
-    }
+    if (preferredImage && await checkImageExists(preferredImage)) return preferredImage;
 
-    // Fallback a blanco si no existe la imagen del color
-    const fallbackImage = templates[side]['blanco'];
-    if (fallbackImage) {
-        const exists = await checkImageExists(fallbackImage);
-        if (exists) return fallbackImage;
-    }
+    const fallback = templates.front['blanco'];
+    if (fallback && await checkImageExists(fallback)) return fallback;
 
-    // Último fallback
     return 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&crop=center&auto=format&q=80';
 };

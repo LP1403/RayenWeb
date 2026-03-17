@@ -10,6 +10,7 @@ interface OrderModalProps {
   selectedSize: string;
   selectedColor: string;
   price: number;
+  shippingCost: number;
 }
 
 const OrderModal: React.FC<OrderModalProps> = ({
@@ -19,7 +20,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
   productName,
   selectedSize,
   selectedColor,
-  price
+  price,
+  shippingCost
 }) => {
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
@@ -31,8 +33,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
     notes: ''
   });
 
-  const [step, setStep] = useState<'initial' | 'form'>('initial');
-
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,14 +40,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
     onSubmit(customerInfo);
   };
 
-  const handleInitialSubmit = () => {
-    // Enviar pedido sin datos del cliente (solo para notificar al admin)
-    onSubmit({});
-  };
-
-  const handleContinueToForm = () => {
-    setStep('form');
-  };
+  const totalPrice = price + shippingCost;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -55,7 +48,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900">
-            {step === 'initial' ? 'Confirmar Pedido' : 'Datos de Envío'}
+            Datos de Envío
           </h2>
           <button
             onClick={onClose}
@@ -67,61 +60,32 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
         {/* Content */}
         <div className="p-6">
-          {step === 'initial' ? (
-            <div className="space-y-6">
-              {/* Resumen del producto */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-medium text-gray-900 mb-2">Resumen del Pedido</h3>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p><span className="font-medium">Producto:</span> {productName}</p>
-                  <p><span className="font-medium">Talle:</span> {selectedSize}</p>
-                  <p><span className="font-medium">Color:</span> {selectedColor}</p>
-                  <p className="text-lg font-semibold text-gray-900 mt-3">
-                    ${price.toLocaleString()}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Resumen del producto - compacto */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">{productName}</span>
                   </p>
+                  <p className="text-xs text-gray-500">{selectedSize} - {selectedColor}</p>
                 </div>
               </div>
-
-              {/* Mensaje informativo */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
-                  Tu pedido será registrado y te contactaremos para coordinar el envío y pago.
-                </p>
-              </div>
-
-              {/* Opciones */}
-              <div className="space-y-3">
-                <button
-                  onClick={handleInitialSubmit}
-                  className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
-                >
-                  Confirmar Pedido
-                </button>
-                <button
-                  onClick={handleContinueToForm}
-                  className="w-full bg-gray-100 text-gray-900 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-                >
-                  Agregar Datos de Envío Ahora
-                </button>
-                <button
-                  onClick={onClose}
-                  className="w-full text-gray-600 py-2 hover:text-gray-900 transition-colors"
-                >
-                  Cancelar
-                </button>
+              <div className="space-y-1 text-sm border-t border-gray-200 pt-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Producto:</span>
+                  <span className="font-semibold text-gray-900">${price.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Envío:</span>
+                  <span className="font-semibold text-gray-900">${shippingCost.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-gray-200">
+                  <span className="font-semibold text-gray-900">Total:</span>
+                  <span className="font-bold text-gray-900 text-lg">${totalPrice.toLocaleString()}</span>
+                </div>
               </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Resumen del producto - compacto */}
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">{productName}</span> - {selectedSize} - {selectedColor}
-                </p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">
-                  ${price.toLocaleString()}
-                </p>
-              </div>
 
               {/* Campos del formulario */}
               <div>
@@ -218,24 +182,23 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 />
               </div>
 
-              {/* Botones */}
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setStep('initial')}
-                  className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-                >
-                  Atrás
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
-                >
-                  Confirmar Pedido
-                </button>
-              </div>
-            </form>
-          )}
+            {/* Botones */}
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="flex-1 bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+              >
+                Confirmar Pedido
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

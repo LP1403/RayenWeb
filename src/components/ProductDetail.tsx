@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Truck, Shield, RotateCcw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Product } from '../types/Product';
 import { getAvailableSizes, isSizeAvailable } from '../config/sizes';
 import { useImageUrl } from '../hooks/useImageUrl';
 import OrderModal from './OrderModal';
 import { OrderService } from '../services/orderService';
+import { ConfigService } from '../services/configService';
 import { CustomerInfo } from '../types/order';
+import { useToastContext } from '../context/ToastContext';
 
 interface ProductDetailProps {
   product: Product;
@@ -13,28 +16,35 @@ interface ProductDetailProps {
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
+  const navigate = useNavigate();
+  const toast = useToastContext();
   const [selectedImage, setSelectedImage] = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || '');
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shippingCost, setShippingCost] = useState(0);
 
-  const handleWhatsAppOrder = () => {
-    const message = `Hola, quiero este producto: ${product.name}${selectedSize ? ` - Talle: ${selectedSize}` : ''
-      }${selectedColor ? ` - Color: ${selectedColor}` : ''}`;
-
-    const whatsappUrl = `https://wa.me/5491123910260?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
+  useEffect(() => {
+    const loadShippingCost = async () => {
+      try {
+        const cost = await ConfigService.getShippingCost();
+        setShippingCost(cost);
+      } catch (error) {
+        console.error('Error loading shipping cost:', error);
+      }
+    };
+    loadShippingCost();
+  }, []);
 
   const handleOrderClick = () => {
     if (!selectedSize) {
-      alert('Por favor selecciona un talle');
+      toast.warning('Selecciona un talle', 'Por favor elige un talle para continuar');
       return;
     }
     if (!selectedColor) {
-      alert('Por favor selecciona un color');
+      toast.warning('Selecciona un color', 'Por favor elige un color para continuar');
       return;
     }
     setIsOrderModalOpen(true);
@@ -50,12 +60,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
           productId: product.id,
           productNumber: product.productNumber,
           productName: product.name,
-          productImage: product.images[0],
+          productImage: product.images[product.catalogImageIndex ?? 0],
           selectedSize,
           selectedColor,
           quantity: 1,
-          unitCost: product.cost || 0, // Costo del producto
-          unitPrice: product.price // Precio de venta
+          unitCost: product.cost || 0,
+          unitPrice: product.price
         }],
         customerInfo,
         notes: ''
@@ -67,14 +77,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
       setIsOrderModalOpen(false);
       
       // Mostrar mensaje de éxito
-      alert('¡Pedido registrado exitosamente! Nos pondremos en contacto contigo pronto.');
+      toast.success('¡Pedido registrado!', 'Nos pondremos en contacto contigo pronto para coordinar el envío.');
       
-      // También enviar por WhatsApp como backup
-      handleWhatsAppOrder();
+      // Volver a la home después de un breve delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
 
     } catch (error) {
       console.error('Error al crear el pedido:', error);
-      alert('Hubo un error al registrar el pedido. Por favor intenta nuevamente.');
+      toast.error('Error al registrar el pedido', 'Por favor intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -157,9 +169,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
                 {product.name}
               </h1>
 
-              <p className="text-3xl font-light text-black mb-8">
-                ${product.price.toLocaleString()}
-              </p>
+              <div className="space-y-2 mb-8">
+                <p className="text-3xl font-light text-black">
+                  ${product.price.toLocaleString()}
+                </p>
+                {shippingCost > 0 && (
+                  <p className="text-sm text-gray-600 font-light">
+                    + ${shippingCost.toLocaleString()} de envío
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -301,6 +320,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack }) => {
         selectedSize={selectedSize}
         selectedColor={selectedColor}
         price={product.price}
+        shippingCost={shippingCost}
       />
     </div>
   );
